@@ -1,3 +1,23 @@
+// RelayRemote
+// Shane Tully (shane@shanetully.com)
+// shanetully.com
+// https://github.com/shanet/RelayRemote
+//
+// Copyright (C) 2012 Shane Tully 
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #include "c_client.h"
 
 int main(int argc, char **argv) {
@@ -116,12 +136,12 @@ int main(int argc, char **argv) {
       if(strcmp(reply, "ERR") == 0) {
          printf("%s: Reply from server: %s\n", prog, reply);
       } else {
-                  printf("%s: Reply from server: %s\n", prog, reply);
-
          int i=0;
-         while(reply[i+2] != '\0') {
-            printf("Pin %c: %s\n", reply[i], (reply[i+2] == '1') ? "ON" : "OFF");
-            i+=4;
+         if(reply[i] != '\0' && reply[i+1] != '\0' && reply[i+2] != '\0') {
+            do {
+               printf("Pin %c: %s\n", reply[i], (reply[i+2] == '1') ? "ON" : "OFF");
+               i+=4;
+            } while(reply[i+1] != '\0');
          }
       }
    } else {
