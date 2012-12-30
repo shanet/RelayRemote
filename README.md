@@ -16,9 +16,9 @@ The Android app supports multiple relay servers, relay groups, homescreen widget
 ## Hardware
 RelayRemote was built and tested on an Arduino Uno with the Arduino Ethernet Shield for networking capabilities. A PowerSwitch Tail II is the recommended relay.
 
-Arduino Uno: http://www.arduino.cc/en/Main/arduinoBoardUno
-Arduino Ethernet Shield: http://www.arduino.cc/en/Main/ArduinoEthernetShield
-PowerSwitch Tail II: http://www.powerswitchtail.com/Pages/default.aspx
+* Arduino Uno: http://www.arduino.cc/en/Main/arduinoBoardUno
+* Arduino Ethernet Shield: http://www.arduino.cc/en/Main/ArduinoEthernetShield
+* PowerSwitch Tail II: http://www.powerswitchtail.com/Pages/default.aspx
 
 
 ## Usage
