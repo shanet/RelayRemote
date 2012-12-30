@@ -36,56 +36,60 @@ public class Widget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);        
         
-        for(int appWidgetId : appWidgetIds) {        	
-        	// Get the name of relay/group assigned to this widget
-        	Database db = new Database(context);
-        	Bundle widgetInfo = db.selectWidget(appWidgetId);
-        	
-        	if(widgetInfo == null) continue;
-        	
-        	String name = "";
-        	switch(widgetInfo.getInt("type")) {
-        		case Constants.WIDGET_RELAY:
-        			Relay relay = db.selectRelay(widgetInfo.getInt("id"));
-        			
-        			name = relay.getName();
-        			
-            		// Call the bg thread to get the state from the server
-        			new Background(context, Constants.OP_GET, true).execute(getBgInfoBundle(relay, Constants.OP_GET, appWidgetId));
-        			
-        			break;
-        		case Constants.WIDGET_GROUP:
-        			RelayGroup group = db.selectRelayGroup(widgetInfo.getInt("id"));
-        			
-        			name = group.getName();
-        			
-            		for(int rid : group.getRids()) {
-            			// Call the bg thread to get the state from the server
-            			new Background(context, Constants.OP_GET, true).execute(getBgInfoBundle(db.selectRelay(rid), Constants.OP_GET, appWidgetId));
-            		}
+        for(int appWidgetId : appWidgetIds) {
+        	try {
+	        	// Get the name of relay/group assigned to this widget
+	        	Database db = new Database(context);
+	        	Bundle widgetInfo = db.selectWidget(appWidgetId);
+	        	
+	        	if(widgetInfo == null) continue;
+	        	
+	        	String name = "";
+	        	switch(widgetInfo.getInt("type")) {
+	        		case Constants.WIDGET_RELAY:
+	        			Relay relay = db.selectRelay(widgetInfo.getInt("id"));
+	        			
+	        			name = relay.getName();
+	        			
+	            		// Call the bg thread to get the state from the server
+	        			new Background(context, Constants.OP_GET, true).execute(getBgInfoBundle(relay, Constants.OP_GET, appWidgetId));
+	        			
+	        			break;
+	        		case Constants.WIDGET_GROUP:
+	        			RelayGroup group = db.selectRelayGroup(widgetInfo.getInt("id"));
+	        			
+	        			name = group.getName();
+	        			
+	            		for(int rid : group.getRids()) {
+	            			// Call the bg thread to get the state from the server
+	            			new Background(context, Constants.OP_GET, true).execute(getBgInfoBundle(db.selectRelay(rid), Constants.OP_GET, appWidgetId));
+	            		}
+	        	}
+	        	                    
+	        	// Set the name of the relay/group the widget is for
+	        	views.setTextViewText(R.id.widgetName, name);
+	        	
+	        	// Check if the state is already in the states array
+	        	// If so, set the indicator as such; if not (unknown state), set it as half while the background thread gets the state
+	        	switch(getState(appWidgetId)) {
+	        		case STATE_UNKNOWN:
+	        			views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_half);
+	        		case STATE_ON:
+	        			views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_on);
+	        		case STATE_OFF:
+	        			views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_off);
+	        	}
+	            
+	            // Set a pending intent on the button for button clicks
+	            Intent intent = new Intent(context, Widget.class);
+	            intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+	            intent.setData(Uri.parse(Integer.valueOf(appWidgetId).toString()));
+	            views.setOnClickPendingIntent(R.id.widgetButton, PendingIntent.getBroadcast(context, 0, intent, 0));
+	            
+	            appWidgetManager.updateAppWidget(appWidgetId, views);
+        	} catch (NullPointerException npe) {
+        		continue;
         	}
-        	                    
-        	// Set the name of the relay/group the widget is for
-        	views.setTextViewText(R.id.widgetName, name);
-        	
-        	// Check if the state is already in the states array
-        	// If so, set the indicator as such; if not (unknown state), set it as half while the background thread gets the state
-        	switch(getState(appWidgetId)) {
-        		case STATE_UNKNOWN:
-        			views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_half);
-        		case STATE_ON:
-        			views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_on);
-        		case STATE_OFF:
-        			views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_off);
-        	}
-            
-            // Set a pending intent on the button for button clicks
-            Intent intent = new Intent(context, Widget.class);
-            intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            intent.setData(Uri.parse(Integer.valueOf(appWidgetId).toString()));
-            views.setOnClickPendingIntent(R.id.widgetButton, PendingIntent.getBroadcast(context, 0, intent, 0));
-            
-            appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
     
