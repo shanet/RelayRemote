@@ -155,7 +155,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 			RelayRemote is an app for controlling an Arduino relay server. The Arduino turns on/off electrical relays when given commands from a client,
 			like this app.\n\n
 			To use this app, you\'ll need an Arduino and Arduino Ethernet Shield running the sketch found at 
-			https://github.com/shanet/RelayRemote/arduino.\n\n
+			https://github.com/shanet/RelayRemote.\n\n
 			More info about setting up Arduino can be found at the link above as can the source code for this app. If you encounter any problems, please
 			open an issue on GitHub at the link above.  
 	
