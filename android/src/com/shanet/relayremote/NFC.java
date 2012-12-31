@@ -43,7 +43,7 @@ public class NFC extends Activity {
         Intent intent = getIntent();
         if(intent.getType() != null && intent.getType().equals("application/" + getPackageName())) {
             // Read the first record which contains the relay info
-            Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             NdefRecord relayRecord = ((NdefMessage)rawMsgs[0]).getRecords()[0];
             String nfcData = new String(relayRecord.getPayload());
             
