@@ -32,7 +32,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class AddRelayGroup extends Activity {
-	@Override
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -47,7 +47,7 @@ public class AddRelayGroup extends Activity {
         final ArrayList<Relay> relays = new Database(this).selectAllRelays();
         ArrayList<String> relayNames = new ArrayList<String>();
         for(Relay relay : relays) {
-        	relayNames.add(relay.getName());
+            relayNames.add(relay.getName());
         }
         relayList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         relayList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, relayNames));
@@ -57,72 +57,72 @@ public class AddRelayGroup extends Activity {
         
         // If the list is empty, remove the other views
         if(relayList.getAdapter().getCount() == 0) {
-        	findViewById(R.id.addEditGroupNameLabel).setVisibility(View.GONE);
-        	findViewById(R.id.addEditRelayListLabel).setVisibility(View.GONE);
-        	nameText.setVisibility(View.GONE);
-        	addGroupButton.setVisibility(View.GONE);
+            findViewById(R.id.addEditGroupNameLabel).setVisibility(View.GONE);
+            findViewById(R.id.addEditRelayListLabel).setVisibility(View.GONE);
+            nameText.setVisibility(View.GONE);
+            addGroupButton.setVisibility(View.GONE);
         }
         
         // Set the click listener on the add group button
         addGroupButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// Check that the name isn't empty
-				String name = nameText.getText().toString();
-				if(name.equals("")) {
-					DialogUtils.displayErrorDialog(AddRelayGroup.this, R.string.emptyNameErrorTitle, R.string.emptyNameError);
-					return;
-				}
-				
-				// Get the selected groups
-				ArrayList<Integer> rids = new ArrayList<Integer>();
-				
-				// Get the selected indices
-		        SparseBooleanArray checkedItems = relayList.getCheckedItemPositions();
+            @Override
+            public void onClick(View v) {
+                // Check that the name isn't empty
+                String name = nameText.getText().toString();
+                if(name.equals("")) {
+                    DialogUtils.displayErrorDialog(AddRelayGroup.this, R.string.emptyNameErrorTitle, R.string.emptyNameError);
+                    return;
+                }
+                
+                // Get the selected groups
+                ArrayList<Integer> rids = new ArrayList<Integer>();
+                
+                // Get the selected indices
+                SparseBooleanArray checkedItems = relayList.getCheckedItemPositions();
 
-		        // Add the selected items to the rids array
-		        for(int i=0; i<relays.size(); i++) {
-		        	if(checkedItems.get(i)) {
-		        		rids.add(relays.get(i).getRid());
-		        	}
-		        }
-		        
-		        // Check if no relays were selected
-		        if(rids.size() == 0) {
-		        	DialogUtils.displayErrorDialog(AddRelayGroup.this, R.string.noGroupsSelectedErrorTitle, R.string.noGroupsSelectedError);
-					return;
-		        }
-				
+                // Add the selected items to the rids array
+                for(int i=0; i<relays.size(); i++) {
+                    if(checkedItems.get(i)) {
+                        rids.add(relays.get(i).getRid());
+                    }
+                }
+                
+                // Check if no relays were selected
+                if(rids.size() == 0) {
+                    DialogUtils.displayErrorDialog(AddRelayGroup.this, R.string.noGroupsSelectedErrorTitle, R.string.noGroupsSelectedError);
+                    return;
+                }
+                
 
-				// Add the new group to the db
-				Database db = new Database(AddRelayGroup.this);
-				db.insertRelayGroup(new RelayGroup(name, rids));
-				
-				Toast.makeText(AddRelayGroup.this, R.string.createdGroup, Toast.LENGTH_SHORT).show();
-				
-				// Return to the calling activity
-				finish();
-			}
-		});
+                // Add the new group to the db
+                Database db = new Database(AddRelayGroup.this);
+                db.insertRelayGroup(new RelayGroup(name, rids));
+                
+                Toast.makeText(AddRelayGroup.this, R.string.createdGroup, Toast.LENGTH_SHORT).show();
+                
+                // Return to the calling activity
+                finish();
+            }
+        });
         
         // Set the click listener on the empty add relay button
         emptyButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				AddRelayGroup.this.startActivity(new Intent(AddRelayGroup.this, AddRelay.class));
-			}
-		});
-  	}
-	
-	@Override 
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.generic_options_menu, menu);
-		return true;
-	}
+            @Override
+            public void onClick(View v) {
+                AddRelayGroup.this.startActivity(new Intent(AddRelayGroup.this, AddRelay.class));
+            }
+        });
+    }
+    
+    @Override 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.generic_options_menu, menu);
+        return true;
+    }
 
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		return Utils.onOptionsItemSelected(this, item);
-	}
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return Utils.onOptionsItemSelected(this, item);
+    }
 }

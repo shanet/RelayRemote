@@ -28,112 +28,112 @@ import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
 public class Main extends FragmentActivity {
-	
-	private RelaysFragment relaysFrag;
-	private RelayGroupsFragment relayGroupsFrag;
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		
-		// Create the adapter that will return a fragment for each of the three
-		// primary sections of the app.
-		RelayPagerAdapter pagerAdapter = new RelayPagerAdapter(getSupportFragmentManager());
+    
+    private RelaysFragment relaysFrag;
+    private RelayGroupsFragment relayGroupsFrag;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the app.
+        RelayPagerAdapter pagerAdapter = new RelayPagerAdapter(getSupportFragmentManager());
 
-		// Set up the ViewPager with the sections adapter.
-		ViewPager pager = (ViewPager) findViewById(R.id.pager);
-		pager.setAdapter(pagerAdapter);
-		
-		// Show the welcome or changelog dialog if necessary
-		Utils.showOpeningDialogs(this);
-		
-		// Init the fragments
-		relaysFrag = new RelaysFragment();
-		relayGroupsFrag = new RelayGroupsFragment();
-	}
-	
-	
-	public class RelayPagerAdapter extends FragmentPagerAdapter {
+        // Set up the ViewPager with the sections adapter.
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(pagerAdapter);
+        
+        // Show the welcome or changelog dialog if necessary
+        Utils.showOpeningDialogs(this);
+        
+        // Init the fragments
+        relaysFrag = new RelaysFragment();
+        relayGroupsFrag = new RelayGroupsFragment();
+    }
+    
+    
+    public class RelayPagerAdapter extends FragmentPagerAdapter {
 
-		public RelayPagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
+        public RelayPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-		public Fragment getItem(int position) {			
-			switch(position) {
-				case 0:
-					return relaysFrag;
-				case 1:
-					return relayGroupsFrag;
-				default:
-					return null;
-			}
-		}
+        public Fragment getItem(int position) {         
+            switch(position) {
+                case 0:
+                    return relaysFrag;
+                case 1:
+                    return relayGroupsFrag;
+                default:
+                    return null;
+            }
+        }
 
-		public int getCount() {
-			return 2;
-		}
+        public int getCount() {
+            return 2;
+        }
 
-		public CharSequence getPageTitle(int position) {
-			switch(position) {
-				case 0:
-					return getString(R.string.relays);
-				case 1:
-					return getString(R.string.groups);
-			}
-			return null;
-		}
-	}
-	
-	
-	public RelaysFragment getRelaysFrag() {
-		return relaysFrag;
-	}
-	
-	
-	public RelayGroupsFragment getRelayGroupsFrag() {
-		return relayGroupsFrag;
-	}
-	
-	
-	public void updateRelaysAndGroupsStates(boolean reloadFromDatabase) {
-		Toast.makeText(this, R.string.refreshingRelays, Toast.LENGTH_SHORT).show();
+        public CharSequence getPageTitle(int position) {
+            switch(position) {
+                case 0:
+                    return getString(R.string.relays);
+                case 1:
+                    return getString(R.string.groups);
+            }
+            return null;
+        }
+    }
+    
+    
+    public RelaysFragment getRelaysFrag() {
+        return relaysFrag;
+    }
+    
+    
+    public RelayGroupsFragment getRelayGroupsFrag() {
+        return relayGroupsFrag;
+    }
+    
+    
+    public void updateRelaysAndGroupsStates(boolean reloadFromDatabase) {
+        Toast.makeText(this, R.string.refreshingRelays, Toast.LENGTH_SHORT).show();
 
-		// We may not want to check the database to save some time so only do so if requested
-		if(reloadFromDatabase) {
-			relaysFrag.reloadRelays();
-			relayGroupsFrag.reloadGroups();
-		}
-		
-		// Update the relays and groups (the relay frag update function will call the groups update function
-		// when the background threads have gotten the relay states from the servers)
-		relaysFrag.updateRelayStates();
-	}
-	
-	
-	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		// If the activity is the edit relay/group activity, we should update the relays
-		if(requestCode == Constants.ADD_EDIT_CODE) {
-			updateRelaysAndGroupsStates(true);
-		}
-	}
-	
-	
-	public void onNewIntent(Intent intent) {
-		// When an NFC tag is being written, call the write tag function when an intent is
-		// received that says the tag is within range of the device and ready to be written to
-		Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-		String nfcMessage = intent.getStringExtra("nfcMessage");
+        // We may not want to check the database to save some time so only do so if requested
+        if(reloadFromDatabase) {
+            relaysFrag.reloadRelays();
+            relayGroupsFrag.reloadGroups();
+        }
+        
+        // Update the relays and groups (the relay frag update function will call the groups update function
+        // when the background threads have gotten the relay states from the servers)
+        relaysFrag.updateRelayStates();
+    }
+    
+    
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        // If the activity is the edit relay/group activity, we should update the relays
+        if(requestCode == Constants.ADD_EDIT_CODE) {
+            updateRelaysAndGroupsStates(true);
+        }
+    }
+    
+    
+    public void onNewIntent(Intent intent) {
+        // When an NFC tag is being written, call the write tag function when an intent is
+        // received that says the tag is within range of the device and ready to be written to
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        String nfcMessage = intent.getStringExtra("nfcMessage");
 
-		if(nfcMessage != null) {
-			NFC.writeTag(this, tag, nfcMessage);
-		}
-	}
-	
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-	}
+        if(nfcMessage != null) {
+            NFC.writeTag(this, tag, nfcMessage);
+        }
+    }
+    
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
 }
