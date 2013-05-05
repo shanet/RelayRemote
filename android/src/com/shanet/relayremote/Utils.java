@@ -40,23 +40,23 @@ public abstract class Utils {
                 
             case R.id.refreshRelaysMenu:
             case R.id.refreshGroupsMenu:
-                ((Main)context).updateRelaysAndGroupsStates(false);
+                ((Main)context).getRelayStates();
                 return true;
                                 
             case R.id.allOnMenuOption:
-                ((Main)context).getRelaysFrag().turnOnOffAllRelays(Constants.CMD_ON);
+                ((Main)context).turnOnOffAllRelays(Constants.CMD_ON);
                 return true;
                 
             case R.id.groupAllOnMenuOption:
-                ((Main)context).getRelayGroupsFrag().turnOnOffAllGroups(Constants.CMD_ON);
+                ((Main)context).turnOnOffAllGroups(Constants.CMD_ON);
                 return true;
                 
             case R.id.allOffMenuOption:
-                ((Main)context).getRelaysFrag().turnOnOffAllRelays(Constants.CMD_OFF);
+                ((Main)context).turnOnOffAllRelays(Constants.CMD_OFF);
                 return true;
                 
             case R.id.groupAllOffMenuOption:
-                ((Main)context).getRelayGroupsFrag().turnOnOffAllGroups(Constants.CMD_OFF);
+                ((Main)context).turnOnOffAllGroups(Constants.CMD_OFF);
                 return true;
                 
             case R.id.aboutMenuOption:
@@ -112,6 +112,7 @@ public abstract class Utils {
     public static int getIntPref(Context context, String key) {
         return context.getSharedPreferences(Constants.SETTINGS_FILE, 0).getInt(key, -1);
     }
+    
     
     public static void showOpeningDialogs(final Context context) {
         // Checking if this is the first run and if it is, write the corresponding values to the prefs.

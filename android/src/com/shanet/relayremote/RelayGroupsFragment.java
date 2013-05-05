@@ -38,7 +38,6 @@ public class RelayGroupsFragment extends ListFragment {
     private View layout;
     private ListView groupsList;
     private RelayGroupsAdapter groupsAdapter;
-    private ArrayList<RelayGroup> groups;
     
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         layout = inflater.inflate(R.layout.relays_group_fragment, null);
@@ -53,76 +52,28 @@ public class RelayGroupsFragment extends ListFragment {
     }
     
     
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        // If visible, reload the relays
+        if(this.isVisible() && isVisibleToUser) {
+            reloadGroups();
+        }
+    }
+    
+    
     public void reloadGroups() {
-        // Reload the relays from the db and update the list in the list adapter
-        groups = new Database(getActivity()).selectAllRelayGroups();
+    	ArrayList<RelayGroup> groups = ((Main)getActivity()).getRelayGroups();
         groupsAdapter.updateGroups(groups);
     }
-    
-    
-    public void turnOnOffAllGroups(char cmd) {
-        for(int i=0; i<groups.size(); i++) {            
-            RelayGroup group = groups.get(i);
-            Database db = new Database(getActivity());
-            
-            // Turn on/off each relay in the group
-            ArrayList<Integer> rids = group.getRids();
-            for(int rid : rids) {
-                // Load the relay from the db
-                Relay relay = db.selectRelay(rid);
-                
-                Utils.startNetworkThreadForRelay(getActivity(), relay, cmd);    
-            }
-        }
-    }
-    
-    
-    public void updateGroupStates() {
-        // If no groups exist, don't do anything
-        if(groups.size() == 0) return;
-        
-        RelayGroup group;
-        ArrayList<Relay> relays = ((Main)getActivity()).getRelaysFrag().getRelays();
 
-        // Check each group to see if all relays in it are on; if not, the group is considered off
-        for(int i=0; i<groups.size(); i++) {
-            group = groups.get(i);
-            
-            boolean isGroupOn = true;
-            rid_loop:
-            for(int rid : group.getRids()) {
-                for(Relay relay : relays) {
-                    // Check if this relay is in the group
-                    if(rid == relay.getRid()) {
-                        // If the relay is in the group but it's off, then the group is considered off
-                        if(!relay.isOn()) {
-                            isGroupOn = false;
-                            break rid_loop;
-                        }
-                        
-                        // Done here. Check the next rid
-                        continue rid_loop;
-                    }
-                }
-            }
-
-            // If the group on boolean is still true, all rids in the group are on
-            if(isGroupOn) {
-                group.turnOn();
-            } else {
-                group.turnOff();
-            }
-        }
-        
-        // Update the adapter with the new states
-        groupsAdapter.updateGroups(groups);
-    }
     
     private void setupRelayGroupsList() {
         groupsList = (ListView) layout.findViewById(android.R.id.list);
         
         // Load all relays from the db and set the list adapter
-        groups = new Database(getActivity()).selectAllRelayGroups();
+    	ArrayList<RelayGroup> groups = ((Main)getActivity()).getRelayGroups();
         groupsAdapter = new RelayGroupsAdapter(getActivity(), groups);
         groupsList.setAdapter(groupsAdapter);
         
@@ -139,11 +90,6 @@ public class RelayGroupsFragment extends ListFragment {
     }
     
     
-    public ArrayList<RelayGroup> getGroups() {
-        return groups;
-    }
-    
-    
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         getActivity().getMenuInflater().inflate(R.menu.groups_context_menu, menu);
@@ -154,7 +100,7 @@ public class RelayGroupsFragment extends ListFragment {
     public boolean onContextItemSelected(MenuItem item) {
         // Get the selected relay
         AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
-        RelayGroup selectedGroup = groups.get(menuInfo.position);
+        RelayGroup selectedGroup = ((Main)getActivity()).getRelayGroups().get(menuInfo.position);
         
         switch (item.getItemId()) {
             case R.id.deleteGroup:

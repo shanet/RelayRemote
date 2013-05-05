@@ -48,8 +48,8 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
     private int appWidgetId;
     
     public Background(Context context, final char op, boolean isWidget) {
-        this.context  = context;
-        this.op       = op;
+    	this.context  = context;
+    	this.op       = op;
         this.isWidget = isWidget;
         
         // If a widget, don't show any dialogs
@@ -87,7 +87,7 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
         
         // If the context is an instance of the main activity, update the state of the relays in the listview
         if(!isWidget && (Activity)context instanceof Main && states.size() > 1) {
-            ((Main)context).getRelaysFrag().setRelayStates(states);
+            ((Main)context).setRelaysAndGroupsStates(states);
         // If a widget, update the indicator light and states map 
         } else if(isWidget) {
             for(int i=1; i<states.size(); i++) {

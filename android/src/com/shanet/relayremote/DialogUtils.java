@@ -78,7 +78,7 @@ public abstract class DialogUtils {
                 Toast.makeText(context, R.string.deletedRelay, Toast.LENGTH_SHORT).show();
                 
                 // Tell the main activity to reload the relays
-                ((Main)context).getRelaysFrag().reloadRelays();
+                ((Main)context).reloadRelaysAndGroupsFromDatabase();
             }
         })
         .setNegativeButton(R.string.nope, new DialogInterface.OnClickListener() {
@@ -100,7 +100,7 @@ public abstract class DialogUtils {
                 Toast.makeText(context, R.string.deletedGroup, Toast.LENGTH_SHORT).show();
                 
                 // Tell the main activity to reload the relays
-                ((Main)context).getRelayGroupsFrag().reloadGroups();
+                ((Main)context).reloadRelaysAndGroupsFromDatabase();
             }
         })
         .setNegativeButton(R.string.nope, new DialogInterface.OnClickListener() {

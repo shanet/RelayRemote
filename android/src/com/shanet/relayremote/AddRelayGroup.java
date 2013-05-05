@@ -40,8 +40,8 @@ public class AddRelayGroup extends Activity {
                 
         final EditText nameText   = (EditText) findViewById(R.id.addEditGroupName);
         final ListView relayList  = (ListView) findViewById(R.id.addEditRelayList);
-        Button addGroupButton      = (Button) findViewById(R.id.addEditRelayGroup);
-        Button emptyButton         = (Button) findViewById(R.id.emptyAddRelayGroup);
+        Button addGroupButton     = (Button) findViewById(R.id.addEditRelayGroup);
+        Button emptyButton        = (Button) findViewById(R.id.emptyAddRelayGroup);
         
         // Fill the list with all available relays
         final ArrayList<Relay> relays = new Database(this).selectAllRelays();
