@@ -138,8 +138,11 @@ public class Main extends FragmentActivity {
     public void getRelayStates() {
         Toast.makeText(this, R.string.refreshingRelays, Toast.LENGTH_SHORT).show();
 
-    	// If no relays exist, don't do anything
-        if(relays.size() == 0) return;
+    	// If no relays exist, call the set relays function directly so
+        // the list adapters in the fragments are still created
+        if(relays.size() == 0) {
+        	setRelaysAndGroupsStates(null);
+        }
         
         // For each unique server, start a thread to get the state of the relays on that server
         ArrayList<String> servers = new ArrayList<String>();
@@ -164,13 +167,15 @@ public class Main extends FragmentActivity {
     public void setRelaysAndGroupsStates(ArrayList<BasicNameValuePair> states) {
     	setRelayStates(states);
     	setGroupStates();
-    	
-        // Update the relay and group fragments adapters with the new states
+
+    	// Update the relay and group fragments adapters with the new states
         updatePagerAdapter();
     }
     
     
     private void setRelayStates(ArrayList<BasicNameValuePair> states) {
+    	if(states == null) return;
+    	
         // The server these states correspond to is the first entry
         String server = states.get(0).getValue();
         
