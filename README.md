@@ -12,6 +12,8 @@ RelayRemote is an Arduino-based server for turing off and on electrical relays, 
 
 The Android app supports multiple relay servers, relay groups, homescreen widgets, and NFC (near field communication) tags.
 
+A demo video and brief description of how it works is available at: http://shanetully.com/2012/12/controlling-a-relay-via-an-arduino-from-an-android-client-with-nfc/
+
 
 ## Hardware
 RelayRemote was built and tested on an Arduino Uno with the Arduino Ethernet Shield for networking capabilities. A PowerSwitch Tail II is the recommended relay.
