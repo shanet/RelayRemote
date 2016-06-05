@@ -1,27 +1,30 @@
 RelayRemote
 ===========
 
-### Shane Tully (shane@shanetully.com)
-### shanetully.com
+#### Shane Tully (shanetully.com)
 
 An Arduino relay control server and Android client
 
+Note: Despite not being updated for years, this project is actively maintained. Bug reports and pull requests are welcome.
 
 ## About
+
 RelayRemote is an Arduino-based server for turing off and on electrical relays, which turn on/off devices run from a standard 120V AC circuit. The project inclues two clients, an Android application and a C client for control from Linux systems.
 
 The Android app supports multiple relay servers, relay groups, homescreen widgets, and NFC (near field communication) tags.
 
+A demo video and brief description of how it works is available at: http://shanetully.com/2012/12/controlling-a-relay-via-an-arduino-from-an-android-client-with-nfc/
 
 ## Hardware
+
 RelayRemote was built and tested on an Arduino Uno with the Arduino Ethernet Shield for networking capabilities. A PowerSwitch Tail II is the recommended relay.
 
 * Arduino Uno: http://www.arduino.cc/en/Main/arduinoBoardUno
 * Arduino Ethernet Shield: http://www.arduino.cc/en/Main/ArduinoEthernetShield
 * PowerSwitch Tail II: http://www.powerswitchtail.com/Pages/default.aspx
 
-
 ## Usage
+
 ### Setting up the hardware
 1. Connect the Arduino ethernet shield to the Arduino by placing the ethernet shield on top of the Arduino
 2. Connect a wire from the postivive terminal of the relay to a pin between 2 and 9 (inclusive) on the Arduino. Keep note of the pin you choose. Multiple relays can be connected to the same Arduino by connecting them to different pins.
@@ -47,7 +50,8 @@ RelayRemote was built and tested on an Arduino Uno with the Arduino Ethernet Shi
 The default port is 2424. Don't forget to add rules to allow communcation on this port on any firewalls or gateways between the client and the server.
 
 ## License
-Copyright (C) 2012 Shane Tully 
+
+Copyright (C) 2012 Shane Tully
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
