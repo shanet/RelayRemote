@@ -7,10 +7,10 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
-    
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.NFC" />
-    
+
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
 
     <application
@@ -27,31 +27,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <activity
             android:name=".AddRelay"
             android:label="@string/addRelay"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
+
         <activity
             android:name=".EditRelay"
             android:label="@string/editRelay"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
+
         <activity
             android:name=".AddRelayGroup"
             android:label="@string/createGroup"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
+
         <activity
             android:name=".EditRelayGroup"
             android:label="@string/editGroup"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
-        
+
         <receiver
             android:name=".Widget"
             android:label="@string/appName">
@@ -62,7 +62,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget" />
         </receiver>
-        
+
         <activity
             android:name=".WidgetConfig"
             android:label="@string/widgetTitle"
@@ -71,7 +71,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
-        
+
         <activity
             android:name=".NFC"
             android:label="@string/appName">
@@ -81,6 +81,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>     
         </activity>
-        
+
     </application>
 </manifest>

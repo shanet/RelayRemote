@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Copyright (C) 2012 Shane Tully 
+<!-- Copyright (C) 2012 Shane Tully
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:orientation="vertical">
-			
+
 		<!--<ImageView android:id="@+id/aboutLogo"
 	    	android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
@@ -32,12 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 			android:layout_marginTop="5dip"
 			android:layout_centerHorizontal="true"
 	    	android:src="@drawable/full_logo"/>-->
-	    		
+
 		<TextView android:id="@+id/aboutText"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="8dip"
 			android:layout_marginLeft="5dip"
 			android:text="@string/nullStr"/>
-	</RelativeLayout>		
+	</RelativeLayout>
 </ScrollView>

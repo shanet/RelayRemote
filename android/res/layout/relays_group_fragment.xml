@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Copyright (C) 2012 Shane Tully 
+<!-- Copyright (C) 2012 Shane Tully
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -30,19 +30,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical">
-        
+
         <TextView android:id="@+id/emptyText"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:layout_marginBottom="10dp"
         	android:textSize="20sp"
         	android:text="@string/emptyGroupText" />
-        
+
        	<Button android:id="@+id/emptyAddRelay"
        	    android:layout_width="match_parent"
        	    android:layout_height="wrap_content"
        	    android:text="@string/createGroup" />
 
     </LinearLayout>
-    
+
 </RelativeLayout>

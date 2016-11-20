@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Copyright (C) 2012 Shane Tully 
+<!-- Copyright (C) 2012 Shane Tully
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
         android:layout_height="wrap_content"
         android:inputType="numberSigned"
         android:ems="10" />
-    
+
     <TextView android:id="@+id/pinSpinnerLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/pinSpinnerEntries" />
-    
+
     <Button android:id="@+id/addEditRelay"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

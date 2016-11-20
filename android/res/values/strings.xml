@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Copyright (C) 2012 Shane Tully 
+<!-- Copyright (C) 2012 Shane Tully
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 
     <string name="appName">Relay Remote</string>
     <string name="menu_settings">Settings</string>
-    
+
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="toggle">Toggle</string>
@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 	<string name="save">Save</string>
     <string name="whatsnew">What\'s New</string>
     <string name="about">About</string>
-    
+
     <string name="addRelay">Add Relay</string>
     <string name="createGroup">Create Group</string>
     <string name="editGroup">Edit Group</string>
@@ -55,10 +55,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
     <string name="deletedGroup">Group Deleted</string>
     <string name="allOn">Turn All On</string>
     <string name="allOff">Turn All Off</string>
-    
+
     <string name="relays">Relays</string>
     <string name="groups">Relay Groups</string>
-    
+
     <string name="emptyText">No relays have been added yet.</string>
     <string name="emptyGroupText">No groups have been created yet.</string>
     <string name="pinLabel">Pin:</string>
@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
     <string name="portLabel">Port:</string>
     <string name="selectRelays">Relays:</string>
     <string name="widgetTitle">Select a relay</string>
-    
+
     <string-array name="pinSpinnerEntries">
         <item>Pin 2</item>
         <item>Pin 3</item>
@@ -78,27 +78,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
         <item>Pin 8</item>
         <item>Pin 9</item>
     </string-array>
-    
+
     <string name="createNFC">Create NFC Tag</string>
     <string name="nfcWrittenTitle">Success!</string>
     <string name="nfcWritten">The NFC tag was written successfully.</string>
     <string name="nfcToast">Performing NFC RelayRemote action&#8230;</string>
-    <string name="aboutNFC">Cool! You have an NFC device!\n\nTo make an NFC tag, you first need a tag. 
+    <string name="aboutNFC">Cool! You have an NFC device!\n\nTo make an NFC tag, you first need a tag.
                             If you don\'t have one, order some and then come back here. If you have one
                             ready to go, read on.\n\nTo create an NFC tag, select an action on the next
-                            menu to take for this relay; either always turn on, always turn off, or 
-                            toggle the current state. Then just touch your NFC tag to your device for 
+                            menu to take for this relay; either always turn on, always turn off, or
+                            toggle the current state. Then just touch your NFC tag to your device for
                             a second or two until you see a confirmation message. That\'s it!</string>
-    
+
     <string-array name="nfcCmdOptions">
         <item>Turn On</item>
         <item>Turn Off</item>
         <item>Toggle</item>
     </string-array>
-    
+
     <string name="connServer">Connecting to server&#8230;</string>
     <string name="gettingStates">Getting relay states from server(s)&#8230;</string>
-    
+
     <string name="deleteRelayTitle">Delete Relay</string>
     <string name="deleteDialog">Are you sure you want to delete relay \"%s\"?</string>
 
@@ -118,7 +118,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 	<string name="nfcBadSpaceError">The NFC tag cannot hold the amount of data required.</string>
 	<string name="nfcUnknownErrorTitle">Unknown Error :(</string>
 	<string name="nfcUnknownError">An unknown error occurred while writing to the NFC tag.</string>
-	
+
     <string name="noRelaysSelectedErrorTitle">No Relays Selected</string>
     <string name="noRelaysSelectedError">No Relays are selected.</string>
     <string name="noGroupsSelectedErrorTitle">No Relay Groups Selected</string>
@@ -147,23 +147,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
     <string name="serverError">The server reported an error processing the data sent to it. Try again.</string>
     <string name="malformedDataErrorTitle">Malformed Data Error</string>
     <string name="malformedDataError">A background thread received malformed or unexpected data.</string>
-    
+
     <string name="welcomeTitle">Welcome!</string>
    	<string name="aboutThisAppTitle">About This App</string>
 	<string name="aboutThisAppText">
 		<b>About this app</b>\n\t
 			RelayRemote is an app for controlling an Arduino relay server. The Arduino turns on/off electrical relays when given commands from a client,
 			like this app.\n\n
-			To use this app, you\'ll need an Arduino and Arduino Ethernet Shield running the sketch found at 
+			To use this app, you\'ll need an Arduino and Arduino Ethernet Shield running the sketch found at
 			https://github.com/shanet/RelayRemote.\n\n
 			More info about setting up Arduino can be found at the link above as can the source code for this app. If you encounter any problems, please
-			open an issue on GitHub at the link above.  
-	
+			open an issue on GitHub at the link above.
+
 		\n\n<b>License</b>\n\t
-			This application is open source software. It is free to distribute, modify, and use with the exception of it being made closed source and sold for 
+			This application is open source software. It is free to distribute, modify, and use with the exception of it being made closed source and sold for
 			commercial purposes without the consent of the author.
 	</string>
-	
+
 	<string name="changelogTitle">Changelog</string>
    	<string name="changelogText">
    		<b>Current Version: 1.1.1</b>

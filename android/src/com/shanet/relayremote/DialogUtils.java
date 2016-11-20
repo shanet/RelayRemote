@@ -1,15 +1,15 @@
-// Copyright (C) 2012 Shane Tully 
+// Copyright (C) 2012 Shane Tully
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -34,8 +34,8 @@ public abstract class DialogUtils {
     public static void displayErrorDialog(Context context, int title, int message) {
         displayErrorDialog(context, context.getString(title), context.getString(message));
     }
-    
-    
+
+
     public static void displayErrorDialog(Context context, String title, String message) {
         new AlertDialog.Builder(context)
         .setTitle(title)
@@ -46,13 +46,13 @@ public abstract class DialogUtils {
         })
         .show();
     }
-    
+
 
     public static void displayInfoDialog(Context context, int title, int message) {
         displayInfoDialog(context, context.getString(title), context.getString(message));
     }
-    
-    
+
+
     public static void displayInfoDialog(Context context, String title, String message) {
         new AlertDialog.Builder(context)
         .setTitle(title)
@@ -63,7 +63,7 @@ public abstract class DialogUtils {
         })
         .show();
     }
-    
+
 
     public static void showDeleteDialog(final Context context, final Relay relay) {
         // Show the dialog to confirm the deletion of relay
@@ -76,7 +76,7 @@ public abstract class DialogUtils {
                 // Delete the relay from the db
                 new Database(context).deleteRelay(relay);
                 Toast.makeText(context, R.string.deletedRelay, Toast.LENGTH_SHORT).show();
-                
+
                 // Tell the main activity to reload the relays
                 ((Main)context).reloadRelaysAndGroupsFromDatabase();
             }
@@ -86,8 +86,8 @@ public abstract class DialogUtils {
         })
         .show();
     }
-    
-    
+
+
     public static void showDeleteDialog(final Context context, final RelayGroup group) {
         new AlertDialog.Builder(context)
         .setTitle(R.string.deleteRelayTitle)
@@ -98,7 +98,7 @@ public abstract class DialogUtils {
                 // Delete the relay from the db
                 new Database(context).deleteRelayGroup(group);
                 Toast.makeText(context, R.string.deletedGroup, Toast.LENGTH_SHORT).show();
-                
+
                 // Tell the main activity to reload the relays
                 ((Main)context).reloadRelaysAndGroupsFromDatabase();
             }
@@ -108,8 +108,8 @@ public abstract class DialogUtils {
         })
         .show();
     }
-    
-    
+
+
     public static void displayNfcTypeDialog(final Context context, final int relay_type, final int id) {
         new AlertDialog.Builder(context)
         .setTitle(R.string.createNFC)
@@ -133,21 +133,21 @@ public abstract class DialogUtils {
                                 cmd = Constants.CMD_OFF;
                                 break;
                             case 2:
-                                cmd = Constants.CMD_TOGGLE;     
+                                cmd = Constants.CMD_TOGGLE;
                         }
-                        
+
                         // Construct the data to write to the tag
                         // Should be of the form [relay/group]-[rid/gid]-[cmd]
                         String nfcMessage = relay_type + "-" + id + "-" + cmd;
-                        
+
                         // When an NFC tag comes into range, call the main activity which handles writing the data to the tag
                         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(context);
-                    
+
                         Intent nfcIntent = new Intent(context, Main.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         nfcIntent.putExtra("nfcMessage", nfcMessage);
                         PendingIntent pi = PendingIntent.getActivity(context, 0, nfcIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);  
-                        
+                        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+
                         nfcAdapter.enableForegroundDispatch((Activity)context, pi, new IntentFilter[] {tagDetected}, null);
                        }
                 })
@@ -160,12 +160,12 @@ public abstract class DialogUtils {
         .show();
     }
 
-    
+
     public static void displayAboutDialog(Context context, int dialogType) {
         createAboutDialog(context, dialogType).show();
     }
 
-    
+
     public static AlertDialog createAboutDialog(Context context, int dialogType) {
         // Create the given about dialog type
         AlertDialog.Builder dialog = new AlertDialog.Builder(context);
