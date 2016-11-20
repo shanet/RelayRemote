@@ -36,8 +36,8 @@ import android.widget.Toast;
 
 public class Main extends FragmentActivity {
 	
-	private static final int RELAYS_FRAGMENT_NUM = 0;
-	private static final int GROUPS_FRAGMENT_NUM = 1;
+	private static final int GROUPS_FRAGMENT_NUM = 0;
+    private static final int RELAYS_FRAGMENT_NUM = 1;
     
     private ArrayList<Relay> relays;
     private ArrayList<RelayGroup> relayGroups;
