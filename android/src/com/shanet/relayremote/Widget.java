@@ -34,8 +34,6 @@ public class Widget extends AppWidgetProvider {
     private static SparseIntArray states = new SparseIntArray();
 
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-
         for(int appWidgetId : appWidgetIds) {
             try {
                 // Get the name of relay/group assigned to this widget
@@ -44,21 +42,15 @@ public class Widget extends AppWidgetProvider {
 
                 if(widgetInfo == null) continue;
 
-                String name = "";
                 switch(widgetInfo.getInt("type")) {
                     case Constants.WIDGET_RELAY:
-                        Relay relay = db.selectRelay(widgetInfo.getInt("id"));
-
-                        name = relay.getName();
-
                         // Call the bg thread to get the state from the server
+                        Relay relay = db.selectRelay(widgetInfo.getInt("id"));
                         new Background(context, Constants.OP_GET, true).execute(getBgInfoBundle(relay, Constants.OP_GET, appWidgetId));
 
                         break;
                     case Constants.WIDGET_GROUP:
                         RelayGroup group = db.selectRelayGroup(widgetInfo.getInt("id"));
-
-                        name = group.getName();
 
                         for(int rid : group.getRids()) {
                             // Call the bg thread to get the state from the server
@@ -66,27 +58,9 @@ public class Widget extends AppWidgetProvider {
                         }
                 }
 
-                // Set the name of the relay/group the widget is for
-                views.setTextViewText(R.id.widgetName, name);
-
-                // Check if the state is already in the states array
-                // If so, set the indicator as such; if not (unknown state), set it as half while the background thread gets the state
-                switch(getState(appWidgetId)) {
-                    case STATE_UNKNOWN:
-                        views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_half);
-                    case STATE_ON:
-                        views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_on);
-                    case STATE_OFF:
-                        views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_off);
-                }
-
-                // Set a pending intent on the button for button clicks
-                Intent intent = new Intent(context, Widget.class);
-                intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-                intent.setData(Uri.parse(Integer.valueOf(appWidgetId).toString()));
-                views.setOnClickPendingIntent(R.id.widgetButton, PendingIntent.getBroadcast(context, 0, intent, 0));
-
-                appWidgetManager.updateAppWidget(appWidgetId, views);
+                // Update the UI
+                RemoteViews views = getWidgetViews(context, appWidgetId);
+                AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
             } catch (NullPointerException npe) {
                 continue;
             }
@@ -97,7 +71,7 @@ public class Widget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
 
-        if (intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) {
+        if(intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) {
             Uri data = intent.getData();
             int appWidgetId = Integer.parseInt(data.getSchemeSpecificPart());
 
@@ -106,6 +80,7 @@ public class Widget extends AppWidgetProvider {
             // Get the type and id of the relay associated with this widget from the db
             Bundle widgetInfo = db.selectWidget(appWidgetId);
             int id = widgetInfo.getInt("id");
+
             switch(widgetInfo.getInt("type")) {
                 case Constants.WIDGET_RELAY:
                     // Call the bg thread to send the commands to the server
@@ -114,15 +89,16 @@ public class Widget extends AppWidgetProvider {
 
                 case Constants.WIDGET_GROUP:
                     RelayGroup group = db.selectRelayGroup(id);
+
                     for(int rid : group.getRids()) {
                         // Call the bg thread to send the commands to the server
                         new Background(context, Constants.OP_SET, true).execute(getBgInfoBundle(db.selectRelay(rid), Constants.OP_SET, appWidgetId));
                     }
             }
 
-            // Update the indicator image
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-            views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_half);
+            // Update the UI with the new unknown state until the bg thread completes
+            setState(appWidgetId, STATE_UNKNOWN);
+            RemoteViews views = getWidgetViews(context, appWidgetId);
             AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
         }
     }
@@ -130,6 +106,7 @@ public class Widget extends AppWidgetProvider {
 
     public Bundle getBgInfoBundle(Relay relay, char op, int appWidgetId) {
         Bundle bgInfo = new Bundle();
+
         bgInfo.putChar("op", op);
         bgInfo.putString("server", relay.getServer());
         bgInfo.putInt("port", relay.getPort());
@@ -148,6 +125,55 @@ public class Widget extends AppWidgetProvider {
 
     public static int getState(int appWidgetId) {
         return states.get(appWidgetId);
+    }
+
+
+    public static RemoteViews getWidgetViews(Context context, int appWidgetId) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+
+        // Set the appropriate name on the label
+        views.setTextViewText(R.id.widgetName, getName(context, appWidgetId));
+
+        // Set the on click handler for the widget
+        Intent intent = new Intent(context, Widget.class);
+        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+        intent.setData(Uri.parse(Integer.valueOf(appWidgetId).toString()));
+        views.setOnClickPendingIntent(R.id.widgetButton, PendingIntent.getBroadcast(context, 0, intent, 0));
+
+        // Set the indicator to whatever the current state of the widget is
+        switch(getState(appWidgetId)) {
+            default:
+            case STATE_UNKNOWN:
+                views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_half);
+                break;
+            case STATE_ON:
+                views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_on);
+                break;
+            case STATE_OFF:
+                views.setImageViewResource(R.id.widgetIndicator, R.drawable.widget_off);
+                break;
+        }
+
+        return views;
+    }
+
+    private static String getName(Context context, int appWidgetId) {
+        Database db = new Database(context);
+        Bundle widgetInfo = db.selectWidget(appWidgetId);
+
+        if(widgetInfo == null) return "";
+
+        switch(widgetInfo.getInt("type")) {
+            case Constants.WIDGET_RELAY:
+                Relay relay = db.selectRelay(widgetInfo.getInt("id"));
+                return relay.getName();
+
+            case Constants.WIDGET_GROUP:
+                RelayGroup group = db.selectRelayGroup(widgetInfo.getInt("id"));
+                return group.getName();
+        }
+
+        return "";
     }
 
 

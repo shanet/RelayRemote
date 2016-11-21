@@ -88,17 +88,15 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
         // If the context is an instance of the main activity, update the state of the relays in the listview
         if(!isWidget && (Activity)context instanceof Main && states.size() > 1) {
             ((Main)context).setRelaysAndGroupsStates(states);
-        // If a widget, update the indicator light and states map
+        // If a widget, update the states map and widget UI
         } else if(isWidget) {
             for(int i=1; i<states.size(); i++) {
                 if(pin == Integer.valueOf(states.get(i).getName())) {
-                    // Update the indicator image
-                    RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-                    views.setImageViewResource(R.id.widgetIndicator, (states.get(i).getValue().charAt(0) == Constants.CMD_ON) ? R.drawable.widget_on : R.drawable.widget_off);
-                    AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
-
                     // Set the state of the widget in the widget class
                     Widget.setState(appWidgetId, (states.get(i).getValue().charAt(0) == Constants.CMD_ON) ? Widget.STATE_ON : Widget.STATE_OFF);
+
+                    RemoteViews views = Widget.getWidgetViews(context, appWidgetId);
+                    AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
                 }
             }
         }

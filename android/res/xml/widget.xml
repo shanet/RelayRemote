@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
 	android:minWidth="50dp"
 	android:minHeight="50dp"
-    android:initialLayout="@layout/widget"
-    android:configure="com.shanet.relayremote.WidgetConfig"
-    android:updatePeriodMillis="1800000">
+  android:initialLayout="@layout/widget"
+  android:configure="com.shanet.relayremote.WidgetConfig"
+  android:updatePeriodMillis="1800000">
 
 </appwidget-provider>
