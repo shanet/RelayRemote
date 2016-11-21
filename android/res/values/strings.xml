@@ -166,17 +166,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
 
 	<string name="changelogTitle">Changelog</string>
    	<string name="changelogText">
-   		<b>Current Version: 1.1.1</b>
+   		<b>Current Version: 1.2</b>
+        \n\n<b>1.2:</b>
+            \n\t- Reordered groups and relays fragments so that groups is first
+            \n\t- Fixed bug with widget where the UI would not be updated on device orientation change
    		\n\n<b>1.1.1:</b>
-   			\n\t-Fixed blank screen on start if no relays were added
+   			\n\t- Fixed blank screen on start if no relays were added
    		\n\n<b>1.1.0:</b>
-   			\n\t-Fixed force close when app is restarted
+   			\n\t- Fixed force close when app is restarted
    		\n\n<b>1.0.2:</b>
-   			\n\t-Fixed broken link in about dialog
+   			\n\t- Fixed broken link in about dialog
    		\n\n<b>1.0.1:</b>
-   			\n\t-Fixed widget force close
+   			\n\t- Fixed widget force close
    		\n\n<b>1.0.0:</b>
-   			\n\t-Initial release! :D
+   			\n\t- Initial release! :D
    	</string>
 
 </resources>
