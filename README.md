@@ -9,26 +9,40 @@ Note: Despite not being updated for years, this project is actively maintained. 
 
 ## About
 
-RelayRemote is an Arduino-based server for turing off and on electrical relays, which turn on/off devices run from a standard 120V AC circuit. The project inclues two clients, an Android application and a C client for control from Linux systems.
+RelayRemote is an Arduino-based server for turning off and on electrical relays, which turn on/off devices run from a standard 120V AC circuit. The project includes two clients, an Android application and a C client for control from Linux systems.
 
-The Android app supports multiple relay servers, relay groups, homescreen widgets, and NFC (near field communication) tags.
+The Android app supports multiple relay servers, relay groups, homescreen widgets, and NFC tags.
 
 A demo video and brief description of how it works is available at: https://shanetully.com/2012/12/controlling-a-relay-via-an-arduino-from-an-android-client-with-nfc/
 
 ## Hardware
 
+### Relay
+
 RelayRemote was built and tested on an Arduino Uno with the Arduino Ethernet Shield for networking capabilities. A PowerSwitch Tail II is the recommended relay.
 
-* Arduino Uno: http://www.arduino.cc/en/Main/arduinoBoardUno
-* Arduino Ethernet Shield: http://www.arduino.cc/en/Main/ArduinoEthernetShield
-* PowerSwitch Tail II: http://www.powerswitchtail.com/Pages/default.aspx
+* [Arduino Uno](http://www.arduino.cc/en/Main/arduinoBoardUno)
+* [Arduino Ethernet Shield](http://www.arduino.cc/en/Main/ArduinoEthernetShield)
+* [PowerSwitch Tail II](http://www.powerswitchtail.com/Pages/default.aspx)
+
+### Wall Switch
+
+Another optional piece of hardware is a wall switch for turning on/off relays more like a traditional light switch.
+
+* [Adafruit Feather M0 WiFi](https://www.adafruit.com/products/3010)
+* [Short Feather Headers Kit](https://www.adafruit.com/products/2940)
+* [FeatherWing Proto](https://www.adafruit.com/products/2884)
+* [Illuminated Pushbutton Switch](http://www.mouser.com/ProductDetail/VCC/CTHS15CIC05ONOFF/?qs=sGAEpiMZZMufv8JNQ5fVHWY5rHfF8YY%252brvRHU%252b5jXA4c%252b8xo7kTh0w%3d%3d)
+* [5V 1A (1000mA) USB port power supply](https://www.adafruit.com/products/501)
+* 330Ohm resistor (or close)
+* A micro-usb cable
 
 ## Usage
 
 ### Setting up the hardware
 
 0. Connect the Arduino ethernet shield to the Arduino by placing the ethernet shield on top of the Arduino
-0. Connect a wire from the postivive terminal of the relay to a pin between 2 and 9 (inclusive) on the Arduino. Keep note of the pin you choose. Multiple relays can be connected to the same Arduino by connecting them to different pins.
+0. Connect a wire from the positive terminal of the relay to a pin between 2 and 9 (inclusive) on the Arduino. Keep note of the pin you choose. Multiple relays can be connected to the same Arduino by connecting them to different pins.
 0. Connect a wire from the negative terminal of the relay to a ground pin on the Arduino
 0. Connect the Arduino to your network
 
@@ -41,6 +55,44 @@ RelayRemote was built and tested on an Arduino Uno with the Arduino Ethernet Shi
 0. Install the APK provided on the Releases page or compile it yourself (see the compiling section)
 0. If desired, build the C client in the c_client folder of this repo on a Linux system by running `make` in a terminal.
 
+### Wall Switch Circuit
+
+Wire the circuit as follows:
+
+![](/arm/docs/wiring.png?raw=true)
+
+On the switch VDD is pin 1 (left most) and LED- is pin 4 (right most).
+
+#### Software Dependencies
+
+These instructions are for Linux (x86_64). See below for where to find instructions for other platforms. Do not ask for Windows support.
+
+* Download and extract the [Adafruit SAMD library](https://github.com/adafruit/arduino-board-index/raw/gh-pages/boards/adafruit-samd-1.0.9.tar.bz2) to `~/.arduino15/packages/adafruit/hardware/samd/1.0.9`
+* Download and extract the [ARM compiler](http://downloads.arduino.cc/gcc-arm-none-eabi-4.8.3-2014q1-linux64.tar.gz) to `~/.arduino15/packages/adafruit/tools/arm-none-eabi-gcc/4.8.3-2014q1`
+* Download and extract [Bossac](http://downloads.arduino.cc/bossac-1.6.1-arduino-x86_64-linux-gnu.tar.gz) to `~/.arduino15/packages/adafruit/tools/bossac/1.6.1-arduino`.
+* Download and extract [CMSIS](http://downloads.arduino.cc/CMSIS-4.0.0.tar.bz2) to `~/.arduino15/packages/adafruit/tools/CMSIS/4.0.0-atmel`.
+
+Note: The archives above can be extracted whenever you'd like, but the paths at the top of the Makefile must be adjusted accordingly.
+
+Alternatively, Adafruit has good instructions for getting the above set up with the help of the Arduino software. If not using Linux, this is most likely the easiest way to gather the dependencies.
+
+#### Compiling & Uploading
+
+Create `arm/src/secrets.h` with the following content:
+
+```
+#define SSID "your_ssid"
+#define PASSPHRASE "passphrase"
+```
+
+Then:
+
+```
+$ cd arm
+$ make
+$ make upload
+```
+
 ### Using the Android app
 
 0. After opening the Android app, relays must be added.
@@ -52,7 +104,7 @@ RelayRemote was built and tested on an Arduino Uno with the Arduino Ethernet Shi
 
 ### Note
 
-The default port is 2424. Don't forget to add rules to allow communcation on this port on any firewalls or gateways between the client and the server.
+The default port is 2424. Don't forget to add rules to allow communication on this port on any firewalls or gateways between the client and the server.
 
 ### Compiling
 
