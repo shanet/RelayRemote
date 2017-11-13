@@ -98,6 +98,8 @@ public class RelayGroupsFragment extends ListFragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        if(!getUserVisibleHint()) return false;
+
         // Get the selected relay
         AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
         RelayGroup selectedGroup = ((Main)getActivity()).getRelayGroups().get(menuInfo.position);

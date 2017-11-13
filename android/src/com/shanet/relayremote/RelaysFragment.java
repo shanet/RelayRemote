@@ -101,6 +101,8 @@ public class RelaysFragment extends ListFragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        if(!getUserVisibleHint()) return false;
+
         // Get the selected relay
         AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
         Relay selectedRelay = ((Main)getActivity()).getRelays().get(menuInfo.position);

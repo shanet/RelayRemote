@@ -111,7 +111,7 @@ public class Main extends FragmentActivity {
     }
 
 
-    private void updatePagerAdapter() {
+    public void updatePagerAdapter() {
         // Create the adapter that will return the relay and relay groups fragments
         RelayPagerAdapter pagerAdapter = new RelayPagerAdapter(getSupportFragmentManager());
 
@@ -146,9 +146,9 @@ public class Main extends FragmentActivity {
 
         // For each unique server, start a thread to get the state of the relays on that server
         ArrayList<String> servers = new ArrayList<String>();
-        Relay relay;
+
         for(int i=0; i<relays.size(); i++) {
-            relay = relays.get(i);
+            Relay relay = relays.get(i);
             if(!servers.contains(relay.getServer())) {
                 Bundle bgInfo = new Bundle();
                 bgInfo.putChar("op", Constants.OP_GET);
@@ -283,6 +283,7 @@ public class Main extends FragmentActivity {
         // If the activity is the edit relay/group activity, we should update the relays
         if(requestCode == Constants.ADD_EDIT_CODE) {
         	reloadRelaysAndGroupsFromDatabase();
+            updatePagerAdapter();
         }
     }
 

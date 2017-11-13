@@ -79,6 +79,7 @@ public abstract class DialogUtils {
 
                 // Tell the main activity to reload the relays
                 ((Main)context).reloadRelaysAndGroupsFromDatabase();
+                ((Main)context).updatePagerAdapter();
             }
         })
         .setNegativeButton(R.string.nope, new DialogInterface.OnClickListener() {
@@ -101,6 +102,7 @@ public abstract class DialogUtils {
 
                 // Tell the main activity to reload the relays
                 ((Main)context).reloadRelaysAndGroupsFromDatabase();
+                ((Main)context).updatePagerAdapter();
             }
         })
         .setNegativeButton(R.string.nope, new DialogInterface.OnClickListener() {
