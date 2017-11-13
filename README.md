@@ -45,8 +45,8 @@ An optional piece of hardware is a wall switch for turning on/off relays more li
 
 ### Setting up the hardware
 
-0. Connect a wire from the positive terminal of the relay to a pin between 2 and 9 (inclusive) on the Feather. Keep note of the pin you choose. Multiple relays can be connected to the same Feather by connecting them to different pins.
-0. Connect a wire from the negative terminal of the relay to a ground pin on the Feather.
+1. Connect a wire from the positive terminal of the relay to a pin between 2 and 9 (inclusive) on the Feather. Keep note of the pin you choose. Multiple relays can be connected to the same Feather by connecting them to different pins.
+1. Connect a wire from the negative terminal of the relay to a ground pin on the Feather.
 
 ### Setting up the software dependencies
 
@@ -61,48 +61,45 @@ Note: The archives above can be extracted whenever you'd like, but the paths at 
 
 ### Compiling & Uploading
 
-0. Create `arm/src/secrets.h` with the following content:
-
-```
-#define _SSID "your_ssid"
-#define _PASSPHRASE "passphrase"
-```
-
-0. Change the network settings (IP, DNS, netmask, and gateway) for the Feather by editing the server header (`arm/server.h`) in the `arm` directory of this repo.
-0. Then:
-
-```
-$ cd arm
-$ make WIFI_SERVER
-$ make upload
-```
-
-### Wall Switch
-
-0. Wire the circuit as follows:
-   ![](/arm/docs/wiring.png?raw=true)
-   On the switch VDD is pin 1 (left most) and LED- is pin 4 (right most).
-0. Then follow the instructions in the "Setting up the software dependencies" and "Compiling & Uploading" sections above.
-0. Use `make WIFI_CLIENT` to build.
+1. Create `arm/src/secrets.h` with the following content:
+    ```
+    #define _SSID "your_ssid"
+    #define _PASSPHRASE "passphrase"
+    ```
+1. Change the network settings (IP, DNS, netmask, and gateway) for the Feather by editing the server header (`arm/server.h`) in the `arm` directory of this repo.
+1. Then:
+    ```
+    $ cd arm
+    $ make WIFI_SERVER
+    $ make upload
+    ```
 
 ### Android app
 
-0. Install the APK provided on the Releases page
+1. Install the APK provided on the Releases page
 
 Alternatively, the Android app can be compiled by:
 
-0. Install the Android SDK (http://developer.android.com/sdk/index.html).
-0. Create `local.properties` in the `android/` directory with the following contents: `sdk.dir=/path/to/android/sdk`.
-0. From the `android` directory, run:
-```
-$ ./gradlew assembleDebug
-$ ./gradlew installDebug
-```
+1. Install the Android SDK (http://developer.android.com/sdk/index.html).
+1. Create `local.properties` in the `android/` directory with the following contents: `sdk.dir=/path/to/android/sdk`.
+1. From the `android` directory, run:
+    ```
+    $ ./gradlew assembleDebug
+    $ ./gradlew installDebug
+    ```
 
 ### Desktop client
 
-0. If desired, build the desktop client in the `desktop` directory of this repo on a Linux system by running `make` from that directory.
-0. The desktop client is fairly straightforward. Run it with `--help` for more info.
+1. If desired, build the desktop client in the `desktop` directory of this repo on a Linux system by running `make` from that directory.
+1. The desktop client is fairly straightforward. Run it with `--help` for more info.
+
+### Wall Switch
+
+1. Wire the circuit as follows:
+    ![](/arm/docs/wiring.png?raw=true)
+    On the switch VDD is pin 1 (left most) and LED- is pin 4 (right most).
+1. Then follow the instructions in the "Setting up the software dependencies" and "Compiling & Uploading" sections above.
+1. Use `make WIFI_CLIENT` to build.
 
 ### Networking
 

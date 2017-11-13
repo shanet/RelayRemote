@@ -17,16 +17,16 @@ RelayRemote was built and tested on an Arduino Uno with the Arduino Ethernet Shi
 
 ### Setting up the hardware
 
-0. Connect the Arduino ethernet shield to the Arduino by placing the ethernet shield on top of the Arduino.
-0. Connect a wire from the positive terminal of the relay to a pin between 2 and 9 (inclusive) on the Arduino. Keep note of the pin you choose. Multiple relays can be connected to the same Arduino by connecting them to different pins.
-0. Connect a wire from the negative terminal of the relay to a ground pin on the Arduino.
-0. Connect the Arduino to your network.
+1. Connect the Arduino ethernet shield to the Arduino by placing the ethernet shield on top of the Arduino.
+1. Connect a wire from the positive terminal of the relay to a pin between 2 and 9 (inclusive) on the Arduino. Keep note of the pin you choose. Multiple relays can be connected to the same Arduino by connecting them to different pins.
+1. Connect a wire from the negative terminal of the relay to a ground pin on the Arduino.
+1. Connect the Arduino to your network.
 
 ### Installing the software
 
-0. Change the network settings (IP, MAC, netmask, and gateway) for the Arduino by editing the server sketch (`relay.pde`) in the `arduino` directory of this repo. The lines needing changes are near the top of the file and are marked by a comment.
-0. Use the Arduino software (http://arduino.cc/en/main/software) to compile and load the server sketch (`relay.pde`) in the `arduino` directory of this repo to the Arduino.
-0. Repeat steps 1 and 2 for each Arduino you're setting up.
+1. Change the network settings (IP, MAC, netmask, and gateway) for the Arduino by editing the server sketch (`relay.pde`) in the `arduino` directory of this repo. The lines needing changes are near the top of the file and are marked by a comment.
+1. Use the Arduino software (http://arduino.cc/en/main/software) to compile and load the server sketch (`relay.pde`) in the `arduino` directory of this repo to the Arduino.
+1. Repeat steps 1 and 2 for each Arduino you're setting up.
 
 ### Networking
 
