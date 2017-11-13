@@ -3,69 +3,54 @@ RelayRemote
 
 #### Shane Tully (shanetully.com)
 
-An Arduino relay control server and Android client
+An Arduino-based relay control server and Android client
 
-Note: Despite not being updated for years, this project is actively maintained. Bug reports and pull requests are welcome.
+Note: This project may go long periods of time without being updated, however it is actively used and maintained. Bug reports and pull requests are welcome.
 
 ## About
 
-RelayRemote is an Arduino-based server for turning off and on electrical relays, which turn on/off devices run from a standard 120V AC circuit. The project includes two clients, an Android application and a C client for control from Linux systems.
+RelayRemote is an Arduino-based server for remotely controlling electrical relays which in turn turn on/off devices run from a standard 120V AC circuit. The project includes three clients, an Android application, a desktop client for control from Linux systems, and an Arduino-based wall switch.
 
 The Android app supports multiple relay servers, relay groups, homescreen widgets, and NFC tags.
 
 A demo video and brief description of how it works is available at: https://shanetully.com/2012/12/controlling-a-relay-via-an-arduino-from-an-android-client-with-nfc/
 
+The original version of this project used an Arduino Uno and Arduino ethernet shield. See [the legacy documentation](arduino/docs/README.md) for instructions on using the legacy hardware.
+
 ## Hardware
 
 ### Relay
 
-RelayRemote was built and tested on an Arduino Uno with the Arduino Ethernet Shield for networking capabilities. A PowerSwitch Tail II is the recommended relay.
+RelayRemote was built and tested on an Adafruit Feather M0 WiFi. A PowerSwitch Tail II is the recommended relay.
 
-* [Arduino Uno](http://www.arduino.cc/en/Main/arduinoBoardUno)
-* [Arduino Ethernet Shield](http://www.arduino.cc/en/Main/ArduinoEthernetShield)
-* [PowerSwitch Tail II](http://www.powerswitchtail.com/Pages/default.aspx)
+* [Adafruit Feather M0 WiFi](https://www.adafruit.com/products/3010)
+* [Adafruit Feather Female Headers](https://www.adafruit.com/product/2886)
+* [PowerSwitch Tail II](http://www.powerswitchtail.com/)
+* [5V 1A (1000mA) USB port power supply](https://www.adafruit.com/products/501)
+* A micro-usb cable
 
 ### Wall Switch
 
-Another optional piece of hardware is a wall switch for turning on/off relays more like a traditional light switch.
+An optional piece of hardware is a wall switch for turning on/off relays more like a traditional light switch.
 
 * [Adafruit Feather M0 WiFi](https://www.adafruit.com/products/3010)
 * [Short Feather Headers Kit](https://www.adafruit.com/products/2940)
 * [FeatherWing Proto](https://www.adafruit.com/products/2884)
 * [Illuminated Pushbutton Switch](http://www.mouser.com/ProductDetail/VCC/CTHS15CIC05ONOFF/?qs=sGAEpiMZZMufv8JNQ5fVHWY5rHfF8YY%252brvRHU%252b5jXA4c%252b8xo7kTh0w%3d%3d)
 * [5V 1A (1000mA) USB port power supply](https://www.adafruit.com/products/501)
-* 330Ohm resistor (or close)
+* 330 Ohm resistor (or similar)
 * A micro-usb cable
 
 ## Usage
 
 ### Setting up the hardware
 
-0. Connect the Arduino ethernet shield to the Arduino by placing the ethernet shield on top of the Arduino
-0. Connect a wire from the positive terminal of the relay to a pin between 2 and 9 (inclusive) on the Arduino. Keep note of the pin you choose. Multiple relays can be connected to the same Arduino by connecting them to different pins.
-0. Connect a wire from the negative terminal of the relay to a ground pin on the Arduino
-0. Connect the Arduino to your network
+0. Connect a wire from the positive terminal of the relay to a pin between 2 and 9 (inclusive) on the Feather. Keep note of the pin you choose. Multiple relays can be connected to the same Feather by connecting them to different pins.
+0. Connect a wire from the negative terminal of the relay to a ground pin on the Feather.
 
-### Installing the software
+### Setting up the software dependencies
 
-0. Change the network settings (IP, MAC, netmask, and gateway) for the Arduino by editing the server sketch (relay.pde) in the arduino folder of this repo. The lines needing changes are near the top of the file and are marked by a comment.
-0. Use the Arduino software (http://arduino.cc/en/main/software) to compile and load the server sketch (relay.pde) in the arduino folder of this repo to the Arduino.
-0. Repeat steps 1 and 2 for each Arduino you're setting up
-0. Install the Android SDK (http://developer.android.com/sdk/index.html).
-0. Install the APK provided on the Releases page or compile it yourself (see the compiling section)
-0. If desired, build the C client in the c_client folder of this repo on a Linux system by running `make` in a terminal.
-
-### Wall Switch Circuit
-
-Wire the circuit as follows:
-
-![](/arm/docs/wiring.png?raw=true)
-
-On the switch VDD is pin 1 (left most) and LED- is pin 4 (right most).
-
-#### Software Dependencies
-
-These instructions are for Linux (x86_64). See below for where to find instructions for other platforms. Do not ask for Windows support.
+These instructions are for Linux (x86_64).
 
 * Download and extract the [Adafruit SAMD library](https://github.com/adafruit/arduino-board-index/raw/gh-pages/boards/adafruit-samd-1.0.9.tar.bz2) to `~/.arduino15/packages/adafruit/hardware/samd/1.0.9`
 * Download and extract the [ARM compiler](http://downloads.arduino.cc/gcc-arm-none-eabi-4.8.3-2014q1-linux64.tar.gz) to `~/.arduino15/packages/adafruit/tools/arm-none-eabi-gcc/4.8.3-2014q1`
@@ -74,45 +59,54 @@ These instructions are for Linux (x86_64). See below for where to find instructi
 
 Note: The archives above can be extracted whenever you'd like, but the paths at the top of the Makefile must be adjusted accordingly.
 
-Alternatively, Adafruit has good instructions for getting the above set up with the help of the Arduino software. If not using Linux, this is most likely the easiest way to gather the dependencies.
+### Compiling & Uploading
 
-#### Compiling & Uploading
-
-Create `arm/src/secrets.h` with the following content:
+0. Create `arm/src/secrets.h` with the following content:
 
 ```
-#define SSID "your_ssid"
-#define PASSPHRASE "passphrase"
+#define _SSID "your_ssid"
+#define _PASSPHRASE "passphrase"
 ```
 
-Then:
+0. Change the network settings (IP, DNS, netmask, and gateway) for the Feather by editing the server header (`arm/server.h`) in the `arm` directory of this repo.
+0. Then:
 
 ```
 $ cd arm
-$ make
+$ make WIFI_SERVER
 $ make upload
 ```
 
-### Using the Android app
+### Wall Switch
 
-0. After opening the Android app, relays must be added.
-0. After adding relays, they can be added to a group, a widget can be placed on the homescreen, or an NFC tag can be created to turn the relays on/off (if the device supports NFC)
+0. Wire the circuit as follows:
+   ![](/arm/docs/wiring.png?raw=true)
+   On the switch VDD is pin 1 (left most) and LED- is pin 4 (right most).
+0. Then follow the instructions in the "Setting up the software dependencies" and "Compiling & Uploading" sections above.
+0. Use `make WIFI_CLIENT` to build.
 
-### Using the C client
+### Android app
 
-0. The C client is fairly straightforward. Run it with `--help` for more info.
+0. Install the APK provided on the Releases page
 
-### Note
+Alternatively, the Android app can be compiled by:
+
+0. Install the Android SDK (http://developer.android.com/sdk/index.html).
+0. Create `local.properties` in the `android/` directory with the following contents: `sdk.dir=/path/to/android/sdk`.
+0. From the `android` directory, run:
+```
+$ ./gradlew assembleDebug
+$ ./gradlew installDebug
+```
+
+### Desktop client
+
+0. If desired, build the desktop client in the `desktop` directory of this repo on a Linux system by running `make` from that directory.
+0. The desktop client is fairly straightforward. Run it with `--help` for more info.
+
+### Networking
 
 The default port is 2424. Don't forget to add rules to allow communication on this port on any firewalls or gateways between the client and the server.
-
-### Compiling
-
-To compile the Android app yourself:
-
-0. Install the Android SDK
-0. Create `local.properties` in the `android/` directory with the following contents: `sdk.dir=/path/to/android/sdk`
-0. From the `android/` directory, run `./gradlew assembleDebug` to build or `./gradlew installDebug` to build and install to attached device.
 
 ## License
 
