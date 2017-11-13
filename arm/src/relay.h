@@ -1,26 +1,25 @@
 #ifndef RELAY_H
+#define RELAY_H
 
 #include <SPI.h>
-#include <WiFi101.h>
+#include "constants.h"
 
-#include "secrets.h"
+#ifdef WIRED_SERVER
+  #include <Ethernet.h>
+#endif
 
-#define BUTTON_PIN 10
-#define LED_PIN 13
-#define PORT 2424
-#define COMMAND "s-9-t"
+#if defined(WIFI_SERVER) || defined(WIFI_CLIENT)
+  #include <WiFi101.h>
+#endif
 
-IPAddress relays[3] = {
-  IPAddress(10,10,10,30),
-  IPAddress(10,10,10,31),
-  IPAddress(10,10,10,32),
-};
+int getPins(Client &client);
+void pinHigh(int pin);
+void pinLow(int pin);
+int setPin(Client &client);
+void setupRelayPins();
 
-int networkStatus = WL_IDLE_STATUS;
+extern void abortClient(Client &client);
 
-void connectToNetwork();
-void toggleRelays();
-void toggleRelay(IPAddress ip);
-void flashLed();
+char pinStates[MAX_RELAY_PIN + 1];
 
 #endif

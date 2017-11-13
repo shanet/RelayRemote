@@ -1,61 +1,101 @@
 #include "relay.h"
 
-void setup() {
-  WiFi.setPins(8, 7, 4, 2);
+void setupRelayPins() {
+  // Set the relay pins as output
+  for(int i=MIN_RELAY_PIN; i<=MAX_RELAY_PIN; i++) {
+    pinMode(i, OUTPUT);
+  }
 
-  pinMode(BUTTON_PIN, INPUT);
   pinMode(LED_PIN, OUTPUT);
-
-  digitalWrite(LED_PIN, HIGH);
-  connectToNetwork();
 }
 
-void loop() {
-  // When the button is pressed toggle the relays and flash the LED
-  if(digitalRead(BUTTON_PIN) == HIGH) {
-    flashLed();
-    toggleRelays();
+int setPin(Client &client) {
+  char pin;
+  char command;
 
-    // Sleep for 3 second to prevent rapid toggling of relays
-    delay(3000);
+  // Read and ignore the hypen seperator
+  if(client.read() != '-') {
+    abortClient(client);
+    return FAILURE;
   }
-}
 
-void connectToNetwork() {
-  while(networkStatus != WL_CONNECTED) {
-    networkStatus = WiFi.begin(SSID, PASSPHRASE);
-
-    // Flash the LED twice when connected to the network
-    flashLed();
-    flashLed();
+  // Read the pin
+  if((pin = client.read()) == -1) {
+    abortClient(client);
+    return FAILURE;
   }
-}
 
-void toggleRelays() {
-  // Connect to the network if not already connected
-  connectToNetwork();
+  // Convert pin to an int
+  pin -= '0';
 
-  // Toggle each relay in the relays list with the set command
-  size_t numRelays = sizeof(relays) / sizeof(IPAddress);
-
-  for(unsigned int i=0; i<numRelays; i++) {
-    // There is apparently an issue with rapidly opening multiple connections so sleep for a bit between relays
-    toggleRelay(relays[i]);
-    delay(100);
+  // Check that the pin is in the valid range
+  if(pin < MIN_RELAY_PIN || pin > MAX_RELAY_PIN) {
+    abortClient(client);
+    return FAILURE;
   }
-}
 
-void toggleRelay(IPAddress ip) {
-  WiFiClient client;
-
-  if(client.connect(ip, PORT)) {
-    client.print(COMMAND);
-    client.stop();
+  // Read and ignore the hypen seperator
+  if(client.read() != '-') {
+    abortClient(client);
+    return FAILURE;
   }
+
+  // Read the command to perform
+  if((command = client.read()) == -1) {
+    abortClient(client);
+    return FAILURE;
+  }
+
+  switch(command) {
+    case '0':
+      // Turn relay off
+      pinLow(pin);
+      break;
+    case '1':
+      // Turn relay on
+      pinHigh(pin);
+      break;
+    case 't':
+    case 'T':
+      // Toggle relay state
+      (pinStates[pin] == HIGH ? pinLow(pin) : pinHigh(pin));
+      break;
+    default:
+      // Unexpected data from client
+      abortClient(client);
+      return FAILURE;
+  }
+
+  client.println(OK);
+  return SUCCESS;
 }
 
-void flashLed() {
-  digitalWrite(LED_PIN, LOW);
-  delay(500);
-  digitalWrite(LED_PIN, HIGH);
+void pinHigh(int pin) {
+  digitalWrite(pin, HIGH);
+  pinStates[pin] = HIGH;
+}
+
+void pinLow(int pin) {
+  digitalWrite(pin, LOW);
+  pinStates[pin] = LOW;
+}
+
+int getPins(Client &client) {
+  // Create a string with the status of each pin
+  char status[64];
+  char append[5];
+  memset(status, '\0', 64);
+
+  for(int i=MIN_RELAY_PIN; i<=MAX_RELAY_PIN; i++) {
+    char pin = i + '0';
+    char state = (pinStates[i] == HIGH ? '1' : '0');
+
+    sprintf(append, "%c-%c;", pin ,state);
+    strncat(status, append, 4);
+  }
+
+  // Send the status string to the client
+  client.print(status);
+
+  return SUCCESS;
 }

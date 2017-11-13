@@ -1,7 +1,7 @@
 # The Basics
 # -------------------------------------------------------------------------------------------------------------
 BOARD := adafruit_feather_m0
-DEVICE := ttyACM1
+DEVICE := ttyACM0
 TARGET := relay
 PACKAGE_DIR := $(HOME)/.arduino15/packages/adafruit
 SAMD_DIR := $(PACKAGE_DIR)/hardware/samd/1.0.9
@@ -107,11 +107,20 @@ CORE_LIB_OBJECTS := $(foreach dir, $(ARDUINOCOREDIR) $(LIBRARY_DIRS), \
 
 .PHONY:	all target upload size console clean test
 
-all: target
+all: wifi_server wired_server client
+
+wifi_server: PROJECT=-DWIFI_SERVER
+wifi_server: target
+
+wired_server: PROJECT=-DWIRED_SERVER
+wired_server: target
+
+wifi_client: PROJECT=-DWIFI_CLIENT
+wifi_client: target
 
 target: $(TARGET).bin
 
-upload: target
+upload:
 	$(UPLOADER) -i -d --port=$(DEVICE) -U true -i -e -w -v $(OUTPUT)/$(TARGET).bin -R
 
 size: $(TARGET).elf
@@ -133,11 +142,11 @@ $(TARGET).elf: $(CORE_LIB) $(OBJECTS)
 
 %.o: %.c
 	mkdir -p $(OUTPUT)$(dir $<)
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) -o $(OUTPUT)/$@ $<
+	$(CC) $(CFLAGS) $(PROJECT) $(DEFINES) $(INCLUDES) -o $(OUTPUT)/$@ $<
 
 %.o: %.cpp
 	mkdir -p $(OUTPUT)/$(dir $<)
-	$(CPPC) $(CPPFLAGS) $(DEFINES) $(INCLUDES) -o $(OUTPUT)/$@ $<
+	$(CPPC) $(CPPFLAGS) $(PROJECT) $(DEFINES) $(INCLUDES) -o $(OUTPUT)/$@ $<
 
 # Build the core library files
 # -------------------------------------------------------------------------------------------------------------
@@ -147,15 +156,15 @@ $(CORE_LIB): $(CORE_LIB_OBJECTS)
 
 $(OUTPUT)/%.c.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) -o $@ $<
+	$(CC) $(CFLAGS) $(PROJECT) $(DEFINES) $(INCLUDES) -o $@ $<
 
 $(OUTPUT)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
-	$(CPPC) $(CPPFLAGS) $(DEFINES) $(INCLUDES) -o $@ $<
+	$(CPPC) $(CPPFLAGS) $(PROJECT) $(DEFINES) $(INCLUDES) -o $@ $<
 
 $(OUTPUT)/%.S.o: %.S
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(DEFINES) $(INCLUDES) -o $@ $<
+	$(CC) $(CPPFLAGS) $(PROJECT) $(DEFINES) $(INCLUDES) -o $@ $<
 
 clean:
 	rm -f $(COMPILED_OBJECTS)
