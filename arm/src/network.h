@@ -14,7 +14,7 @@
 #include "secrets.h"
 
 void wifiSetup();
-void connectToNetwork(IPAddress *ip, IPAddress *dns, IPAddress *gateway, IPAddress *subnet);
+bool connectToNetwork(IPAddress *ip, IPAddress *dns, IPAddress *gateway, IPAddress *subnet);
 void processMessage(Client &client);
 void abortClient(Client &client);
 void flashLed();

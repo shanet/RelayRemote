@@ -12,6 +12,9 @@ void setup() {
 }
 
 void loop() {
+  // Ensure we're still connected to the network
+  connectToNetwork(NULL, NULL, NULL, NULL);
+
   // When the button is pressed toggle the relays and flash the LED
   if(digitalRead(BUTTON_PIN) == HIGH) {
     flashLed();

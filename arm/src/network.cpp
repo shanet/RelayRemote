@@ -5,7 +5,10 @@
     WiFi.setPins(8, 7, 4, 2);
   }
 
-  void connectToNetwork(IPAddress *ip=NULL, IPAddress *dns=NULL, IPAddress *gateway=NULL, IPAddress *subnet=NULL) {
+  bool connectToNetwork(IPAddress *ip=NULL, IPAddress *dns=NULL, IPAddress *gateway=NULL, IPAddress *subnet=NULL) {
+    // Do nothing if already connected
+    if(WiFi.status() == WL_CONNECTED) return false;
+
     while(networkStatus != WL_CONNECTED) {
       networkStatus = WiFi.begin(_SSID, _PASSPHRASE);
       delay(10000);
@@ -19,6 +22,8 @@
     if(ip != NULL && dns !=NULL && gateway != NULL && subnet != NULL) {
       WiFi.config(*ip, *dns, *gateway, *subnet);
     }
+
+    return true;
   }
 #endif
 

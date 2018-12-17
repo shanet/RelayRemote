@@ -35,7 +35,7 @@
 extern void processMessage(Client &client);
 extern void setupRelayPins();
 extern void wifiSetup();
-extern void connectToNetwork(IPAddress *ip, IPAddress *dns, IPAddress *gateway, IPAddress *subnet);
+extern bool connectToNetwork(IPAddress *ip, IPAddress *dns, IPAddress *gateway, IPAddress *subnet);
 extern void flashLed();
 
 #endif

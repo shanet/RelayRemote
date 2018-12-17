@@ -15,7 +15,7 @@ void toggleRelays();
 void toggleRelay(IPAddress ip);
 
 extern void wifiSetup();
-extern void connectToNetwork(IPAddress *ip, IPAddress *dns, IPAddress *gateway, IPAddress *subnet);
+extern bool connectToNetwork(IPAddress *ip, IPAddress *dns, IPAddress *gateway, IPAddress *subnet);
 extern void flashLed();
 
 #endif

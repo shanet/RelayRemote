@@ -11,6 +11,9 @@ void setup() {
 }
 
 void loop() {
+  // Ensure we're still connected to the network
+  if(connectToNetwork(&ip, &dns, &gateway, &subnet)) server.begin();
+
   // Get a client from the server
   WiFiClient client = server.available();
 
