@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
         android:layout_weight="1"
         android:gravity="center"
         android:scaleType="center"
+        android:textColor="@android:color/white"
         android:contentDescription="@null"/>
 
     <ImageView android:id="@+id/widgetIndicator"
