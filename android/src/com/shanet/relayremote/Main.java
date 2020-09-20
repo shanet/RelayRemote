@@ -17,8 +17,6 @@ package com.shanet.relayremote;
 
 import java.util.ArrayList;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -29,8 +27,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v4.view.ViewPager;
+import android.util.Pair;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -164,7 +163,7 @@ public class Main extends FragmentActivity {
     }
 
 
-    public void setRelaysAndGroupsStates(ArrayList<BasicNameValuePair> states) {
+    public void setRelaysAndGroupsStates(ArrayList<Pair> states) {
     	setRelayStates(states);
     	setGroupStates();
 
@@ -173,11 +172,11 @@ public class Main extends FragmentActivity {
     }
 
 
-    private void setRelayStates(ArrayList<BasicNameValuePair> states) {
+    private void setRelayStates(ArrayList<Pair> states) {
     	if(states == null) return;
 
         // The server these states correspond to is the first entry
-        String server = states.get(0).getValue();
+        String server = (String)states.get(0).second;
 
         Relay relay;
         ArrayList<Bundle> widgets = database.selectAllWidgets();
@@ -189,8 +188,8 @@ public class Main extends FragmentActivity {
             // If the current relay belongs to the server the states belong to, find it's state by matching pins
             if(relay.getServer().equals(server)) {
                 for(int j=1; j<states.size(); j++) {
-                    if(relay.getPin() == Integer.valueOf(states.get(j).getName())) {
-                        if(states.get(j).getValue().charAt(0) == Constants.CMD_ON) {
+                    if(relay.getPin() == Integer.valueOf((String)states.get(j).first)) {
+                        if(((String)states.get(j).second).charAt(0) == Constants.CMD_ON) {
                             relay.turnOn();
                         } else {
                             relay.turnOff();
@@ -201,11 +200,11 @@ public class Main extends FragmentActivity {
                             if(widget.getInt("type") == Constants.WIDGET_RELAY && widget.getInt("id") == relay.getRid()) {
                                 // Update the indicator image
                                 RemoteViews views = new RemoteViews(this.getPackageName(), R.layout.widget);
-                                views.setImageViewResource(R.id.widgetIndicator, (states.get(i).getValue().charAt(0) == Constants.CMD_ON) ? R.drawable.widget_on : R.drawable.widget_off);
+                                views.setImageViewResource(R.id.widgetIndicator, (((String)states.get(i).second).charAt(0) == Constants.CMD_ON) ? R.drawable.widget_on : R.drawable.widget_off);
                                 AppWidgetManager.getInstance(this).updateAppWidget(widget.getInt("wid"), views);
 
                                 // Set the state of the widget in the widget class
-                                Widget.setState(widget.getInt("wid"), (states.get(i).getValue().charAt(0) == Constants.CMD_ON) ? Widget.STATE_ON : Widget.STATE_OFF);
+                                Widget.setState(widget.getInt("wid"), (((String)states.get(i).second).charAt(0) == Constants.CMD_ON) ? Widget.STATE_ON : Widget.STATE_OFF);
                             }
                         }
 

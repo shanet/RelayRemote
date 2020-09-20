@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -32,9 +30,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Pair;
 import android.widget.RemoteViews;
 
-public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameValuePair>> {
+public class Background extends AsyncTask<Bundle, Integer, ArrayList<Pair>> {
 
     private AlertDialog dialog;
     private Context context;
@@ -78,7 +77,7 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
         if(!isWidget) timer.schedule(tt, 500);
     }
 
-    protected void onPostExecute(ArrayList<BasicNameValuePair> states) {
+    protected void onPostExecute(ArrayList<Pair> states) {
         // Dismiss the dialog and cancel the timer
         if(!isWidget) {
             dialog.dismiss();
@@ -91,9 +90,9 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
         // If a widget, update the states map and widget UI
         } else if(isWidget) {
             for(int i=1; i<states.size(); i++) {
-                if(pin == Integer.valueOf(states.get(i).getName())) {
+                if(pin == Integer.valueOf((String)states.get(i).first)) {
                     // Set the state of the widget in the widget class
-                    Widget.setState(appWidgetId, (states.get(i).getValue().charAt(0) == Constants.CMD_ON) ? Widget.STATE_ON : Widget.STATE_OFF);
+                    Widget.setState(appWidgetId, (((String)states.get(i).second).charAt(0) == Constants.CMD_ON) ? Widget.STATE_ON : Widget.STATE_OFF);
 
                     RemoteViews views = Widget.getWidgetViews(context, appWidgetId);
                     AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
@@ -102,7 +101,7 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
         }
     }
 
-    protected ArrayList<BasicNameValuePair> doInBackground(Bundle...params) {
+    protected ArrayList<Pair> doInBackground(Bundle...params) {
         // There should only be 1 bundle
         if(params.length != 1) {
             if(!isWidget) {
@@ -112,7 +111,7 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
                     }
                 });
             }
-            return new ArrayList<BasicNameValuePair>();
+            return new ArrayList<Pair>();
         }
 
         // Get the UI info from the bundle
@@ -127,7 +126,7 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
         // Create the server
         Server server;
         String reply;
-        ArrayList<BasicNameValuePair> states = new ArrayList<BasicNameValuePair>();
+        ArrayList<Pair> states = new ArrayList<Pair>();
 
         try {
             server = new Server(host, port);
@@ -187,16 +186,16 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
             // Create the states array
             } else {
                 // The first entry in the states list should be the server the states belong to
-                states.add(new BasicNameValuePair("server", host));
+                states.add(new Pair("server", host));
 
                 // If a get operation, format the reply
                 if(op == Constants.OP_GET) {
                     for(int i=0; i< reply.length(); i+=4) {
-                        states.add(new BasicNameValuePair(String.valueOf(reply.charAt(i)), String.valueOf((reply.charAt(i+2) == '1') ? Constants.CMD_ON : Constants.CMD_OFF)));
+                        states.add(new Pair(String.valueOf(reply.charAt(i)), String.valueOf((reply.charAt(i+2) == '1') ? Constants.CMD_ON : Constants.CMD_OFF)));
                     }
                 // Else, it's a set command so just add the pin we just handled
                 } else {
-                    states.add(new BasicNameValuePair(String.valueOf(pin), String.valueOf(cmd)));
+                    states.add(new Pair(String.valueOf(pin), String.valueOf(cmd)));
                 }
             }
 
@@ -243,11 +242,11 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<BasicNameVa
         return states;
     }
 
-    private ArrayList<BasicNameValuePair> createErrorStatesArray(String host, int pin, char cmd) {
+    private ArrayList<Pair> createErrorStatesArray(String host, int pin, char cmd) {
         // If there was an error, the state should fall back to whatever the original state was
-        ArrayList<BasicNameValuePair> states = new ArrayList<BasicNameValuePair>();
-        states.add(new BasicNameValuePair("server", host));
-        states.add(new BasicNameValuePair(String.valueOf(pin), String.valueOf((cmd == Constants.CMD_OFF ? Constants.CMD_ON : Constants.CMD_OFF))));
+        ArrayList<Pair> states = new ArrayList<Pair>();
+        states.add(new Pair("server", host));
+        states.add(new Pair(String.valueOf(pin), String.valueOf((cmd == Constants.CMD_OFF ? Constants.CMD_ON : Constants.CMD_OFF))));
         return states;
     }
 }

@@ -44,7 +44,7 @@ public class RelayGroupsAdapter extends ArrayAdapter<RelayGroup> {
             view = inflater.inflate(R.layout.relay_adapter, null);
         }
 
-        TextView relayName        = (TextView) view.findViewById(R.id.relayName);
+        TextView relayName = (TextView) view.findViewById(R.id.relayName);
         final Switch groupSwitch = (Switch) view.findViewById(R.id.relaySwitch);
 
         // Set the name on the label
@@ -70,6 +70,11 @@ public class RelayGroupsAdapter extends ArrayAdapter<RelayGroup> {
                 ArrayList<Integer> rids = group.getRids();
                 for(int rid : rids) {
                     Utils.startNetworkThreadForRelay(context, db.selectRelay(rid), (groupSwitch.isChecked()) ? Constants.CMD_ON : Constants.CMD_OFF);
+
+                    // There is apparently an issue with rapidly opening multiple connections so sleep for a bit between relays
+                    try {
+                        Thread.sleep(100);
+                    } catch(InterruptedException exception) {}
                 }
             }
         });
