@@ -143,7 +143,7 @@ public class Widget extends AppWidgetProvider {
         Intent intent = new Intent(context, Widget.class);
         intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
         intent.setData(Uri.parse(Integer.valueOf(appWidgetId).toString()));
-        views.setOnClickPendingIntent(R.id.widgetButton, PendingIntent.getBroadcast(context, 0, intent, 0));
+        views.setOnClickPendingIntent(R.id.widgetButton, PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE));
 
         // Set the indicator to whatever the current state of the widget is
         switch(getState(appWidgetId)) {

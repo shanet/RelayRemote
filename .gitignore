@@ -1,6 +1,6 @@
 android/.gradle
 android/local.properties
-android/build
+android/app/build
 
 arm/bin/deploy
 arm/src/secrets.h

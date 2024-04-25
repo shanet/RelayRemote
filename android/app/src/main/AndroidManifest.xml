@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.NFC" />
+
+  <uses-feature android:name="android.hardware.nfc" android:required="false" />
+
+  <application
+    android:allowBackup="true"
+    android:icon="@drawable/launcher_icon"
+    android:label="@string/appName"
+    android:theme="@style/AppTheme">
+    <activity
+      android:name=".Main"
+      android:label="@string/appName"
+      android:exported="true"
+      android:configChanges="orientation|keyboardHidden|screenSize">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+
+    <activity
+      android:name=".AddRelay"
+      android:label="@string/addRelay"
+      android:configChanges="orientation|keyboardHidden|screenSize">
+    </activity>
+
+    <activity
+      android:name=".EditRelay"
+      android:label="@string/editRelay"
+      android:configChanges="orientation|keyboardHidden|screenSize">
+    </activity>
+
+    <activity
+      android:name=".AddRelayGroup"
+      android:label="@string/createGroup"
+      android:configChanges="orientation|keyboardHidden|screenSize">
+    </activity>
+
+    <activity
+      android:name=".EditRelayGroup"
+      android:label="@string/editGroup"
+      android:configChanges="orientation|keyboardHidden|screenSize">
+    </activity>
+
+    <receiver
+      android:name=".Widget"
+      android:exported="true"
+      android:label="@string/appName">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/widget" />
+    </receiver>
+
+    <activity
+      android:name=".WidgetConfig"
+      android:label="@string/widgetTitle"
+      android:exported="true"
+      android:theme="@android:style/Theme.Holo.Dialog">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+      </intent-filter>
+    </activity>
+
+    <activity
+      android:name=".NFC"
+      android:exported="true"
+      android:label="@string/appName">
+      <intent-filter>
+        <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+        <data android:mimeType="application/com.shanet.relayremote"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+    </activity>
+  </application>
+</manifest>
