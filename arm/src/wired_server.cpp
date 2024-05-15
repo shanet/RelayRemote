@@ -14,7 +14,7 @@ void loop() {
   // Get a client from the server
   EthernetClient client = server.available();
 
-  if(client) {
+  if(!client) {
     return;
   }
 

@@ -93,11 +93,6 @@ public class Widget extends AppWidgetProvider {
                     for(int rid : group.getRids()) {
                         // Call the bg thread to send the commands to the server
                         new Background(context, Constants.OP_SET, true).execute(getBgInfoBundle(db.selectRelay(rid), Constants.OP_SET, appWidgetId));
-
-                        // There is apparently an issue with rapidly opening multiple connections so sleep for a bit between relays
-                        try {
-                            Thread.sleep(100);
-                        } catch(InterruptedException exception) {}
                     }
             }
 

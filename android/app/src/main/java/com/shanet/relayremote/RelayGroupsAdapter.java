@@ -70,11 +70,6 @@ public class RelayGroupsAdapter extends ArrayAdapter<RelayGroup> {
                 ArrayList<Integer> rids = group.getRids();
                 for(int rid : rids) {
                     Utils.startNetworkThreadForRelay(context, db.selectRelay(rid), (groupSwitch.isChecked()) ? Constants.CMD_ON : Constants.CMD_OFF);
-
-                    // There is apparently an issue with rapidly opening multiple connections so sleep for a bit between relays
-                    try {
-                        Thread.sleep(100);
-                    } catch(InterruptedException exception) {}
                 }
             }
         });

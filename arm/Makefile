@@ -107,7 +107,7 @@ CORE_LIB_OBJECTS := $(foreach dir, $(ARDUINOCOREDIR) $(LIBRARY_DIRS), \
 
 .PHONY:	all target upload size console clean test
 
-all: wifi_server wired_server client
+all: wifi_server wired_server wifi_client
 
 wifi_server: PROJECT=-DWIFI_SERVER
 wifi_server: target

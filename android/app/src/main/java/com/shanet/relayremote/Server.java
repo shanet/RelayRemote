@@ -54,6 +54,7 @@ public class Server {
         addr = new InetSocketAddress(host, port);
         connSock = new Socket();
         connSock.setSoTimeout(Constants.NETWORK_TIMEOUT);
+        connSock.setTcpNoDelay(true);
     }
 
 
