@@ -1,18 +1,3 @@
-// Copyright (C) 2012 Shane Tully
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.shanet.relayremote;
 
 import android.app.Activity;
@@ -27,106 +12,105 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 public class EditRelay extends Activity {
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.add_edit_relay);
+    setContentView(R.layout.add_edit_relay);
 
-        // Get the relay to edit
-        final Database db = new Database(this);
-        final Relay editRelay = db.selectRelay(getIntent().getIntExtra("rid", -1));
+    // Get the relay to edit
+    final Database db = new Database(this);
+    final Relay editRelay = db.selectRelay(getIntent().getIntExtra("rid", -1));
 
-        final Spinner pinSpinner  = (Spinner) findViewById(R.id.pinSpinner);
-        final EditText nameText   = (EditText) findViewById(R.id.addEditName);
-        final EditText serverText = (EditText) findViewById(R.id.addEditServer);
-        final EditText portText   = (EditText) findViewById(R.id.addEditPort);
-        Button editRelayButton     = (Button) findViewById(R.id.addEditRelay);
+    final Spinner pinSpinner  = (Spinner) findViewById(R.id.pinSpinner);
+    final EditText nameText   = (EditText) findViewById(R.id.addEditName);
+    final EditText serverText = (EditText) findViewById(R.id.addEditServer);
+    final EditText portText   = (EditText) findViewById(R.id.addEditPort);
+    Button editRelayButton     = (Button) findViewById(R.id.addEditRelay);
 
-        // Change the edit relay button text since the layout is shared with the add relay activity
-        editRelayButton.setText(R.string.updateRelay);
+    // Change the edit relay button text since the layout is shared with the add relay activity
+    editRelayButton.setText(R.string.updateRelay);
 
-        // Get the position of the relay's current pin in the entries array
-        int position = 0;
-        String[] entries = getResources().getStringArray(R.array.pinSpinnerEntries);
-        for(int i=0; i<entries.length; i++) {
-            if(Integer.valueOf(entries[i].substring(entries[i].length()-1)) == editRelay.getPin()) {
-                position = i;
-                break;
-            }
+    // Get the position of the relay's current pin in the entries array
+    int position = 0;
+    String[] entries = getResources().getStringArray(R.array.pinSpinnerEntries);
+    for(int i=0; i<entries.length; i++) {
+      if(Integer.valueOf(entries[i].substring(entries[i].length()-1)) == editRelay.getPin()) {
+        position = i;
+        break;
+      }
+    }
+
+    // Set the default pin
+    pinSpinner.setSelection(position);
+
+    // Set the name in the UI
+    nameText.setText(editRelay.getName());
+
+    // Set the server in the UI
+    serverText.setText(editRelay.getServer());
+
+    // Set the port in the UI
+    portText.setText(Integer.valueOf(editRelay.getPort()).toString());
+
+    editRelayButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        // Get the selected pin
+        String selectedPin = (String) pinSpinner.getSelectedItem();
+        int pin = Integer.valueOf(selectedPin.substring(selectedPin.length()-1));
+
+        // Check that the port isn't empty
+        if(portText.getText().toString().equals("")) {
+          DialogUtils.displayErrorDialog(EditRelay.this, R.string.emptyPortErrorTitle, R.string.emptyPortError);
+          return;
         }
 
-        // Set the default pin
-        pinSpinner.setSelection(position);
+        // Check that the server isn't empty
+        String server = serverText.getText().toString();
+        if(server.equals("")) {
+          DialogUtils.displayErrorDialog(EditRelay.this, R.string.emptyServerErrorTitle, R.string.emptyServerError);
+          return;
+        }
 
-        // Set the name in the UI
-        nameText.setText(editRelay.getName());
+        // Check that the name isn't empty
+        String name = nameText.getText().toString();
+        if(name.equals("")) {
+          DialogUtils.displayErrorDialog(EditRelay.this, R.string.emptyNameErrorTitle, R.string.emptyNameError);
+        }
 
-        // Set the server in the UI
-        serverText.setText(editRelay.getServer());
+        // Check the port range
+        int port = Integer.valueOf(portText.getText().toString());
+        if(port < 1 || port > 65535) {
+          DialogUtils.displayErrorDialog(EditRelay.this, R.string.portRangeErrorTitle, R.string.portRangeError);
+          return;
+        }
 
-        // Set the port in the UI
-        portText.setText(Integer.valueOf(editRelay.getPort()).toString());
+        // Update the fields in the relay
+        editRelay.setPin(pin);
+        editRelay.setName(name);
+        editRelay.setServer(server);
+        editRelay.setPort(port);
 
-        editRelayButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get the selected pin
-                String selectedPin = (String) pinSpinner.getSelectedItem();
-                int pin = Integer.valueOf(selectedPin.substring(selectedPin.length()-1));
+        // Update the relay in the db
+        db.updateRelay(editRelay);
 
-                // Check that the port isn't empty
-                if(portText.getText().toString().equals("")) {
-                    DialogUtils.displayErrorDialog(EditRelay.this, R.string.emptyPortErrorTitle, R.string.emptyPortError);
-                    return;
-                }
+        Toast.makeText(EditRelay.this, R.string.editedRelay, Toast.LENGTH_SHORT).show();
 
-                // Check that the server isn't empty
-                String server = serverText.getText().toString();
-                if(server.equals("")) {
-                    DialogUtils.displayErrorDialog(EditRelay.this, R.string.emptyServerErrorTitle, R.string.emptyServerError);
-                    return;
-                }
+        // Return to the calling activity
+        finish();
+      }
+    });
+  }
 
-                // Check that the name isn't empty
-                String name = nameText.getText().toString();
-                if(name.equals("")) {
-                    DialogUtils.displayErrorDialog(EditRelay.this, R.string.emptyNameErrorTitle, R.string.emptyNameError);
-                }
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.generic_options_menu, menu);
+    return true;
+  }
 
-                // Check the port range
-                int port = Integer.valueOf(portText.getText().toString());
-                if(port < 1 || port > 65535) {
-                    DialogUtils.displayErrorDialog(EditRelay.this, R.string.portRangeErrorTitle, R.string.portRangeError);
-                    return;
-                }
-
-                // Update the fields in the relay
-                editRelay.setPin(pin);
-                editRelay.setName(name);
-                editRelay.setServer(server);
-                editRelay.setPort(port);
-
-                // Update the relay in the db
-                db.updateRelay(editRelay);
-
-                Toast.makeText(EditRelay.this, R.string.editedRelay, Toast.LENGTH_SHORT).show();
-
-                // Return to the calling activity
-                finish();
-            }
-        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.generic_options_menu, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return Utils.onOptionsItemSelected(this, item);
-    }
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return Utils.onOptionsItemSelected(this, item);
+  }
 }
