@@ -1,31 +1,34 @@
 RelayRemote
 ===========
 
-#### Shane Tully (shanetully.com)
+#### Kira Tully
+#### ephemeral.cx
 
-An Arduino-based relay control server and Android client
+An Arduino-based 120V relay control server and Android client.
 
-Note: This project may go long periods of time without being updated, however it is actively used and maintained. Bug reports and pull requests are welcome.
+Note: This project may go long periods of time without being updated, however it is actively used and maintained. Bug reports are welcome.
 
 ## About
 
-RelayRemote is an Arduino-based server for remotely controlling electrical relays which in turn turn on/off devices run from a standard 120V AC circuit. The project includes three clients, an Android application, a desktop client for control from Linux systems, and an Arduino-based wall switch.
+RelayRemote is an Arduino-based server for remotely controlling electrical relays which turn on/off devices run from a standard 120V AC circuit. The project includes four clients:
 
-The Android app supports multiple relay servers, relay groups, homescreen widgets, and NFC tags.
+* An Android application
+  * The Android app supports multiple relay servers, relay groups, homescreen widgets, and NFC tags.
+* A web UI
+* A desktop Rust client
+* An Arduino-based wall switch
 
-A demo video and brief description of how it works is available at: https://shanetully.com/2012/12/controlling-a-relay-via-an-arduino-from-an-android-client-with-nfc/
-
-The original version of this project used an Arduino Uno and Arduino ethernet shield. See [the legacy documentation](arduino/docs/README.md) for instructions on using the legacy hardware.
+A demo video and brief description of how it works is available at: https://ephemeral.cx/2012/12/controlling-a-relay-via-an-arduino-from-an-android-client-with-nfc/
 
 ## Hardware
 
 ### Relay
 
-RelayRemote was built and tested on an Adafruit Feather M0 WiFi. A PowerSwitch Tail II is the recommended relay.
+RelayRemote was built and tested on an Adafruit Feather M0 WiFi. Any IoT 120V relay should work.
 
 * [Adafruit Feather M0 WiFi](https://www.adafruit.com/products/3010)
 * [Adafruit Feather Female Headers](https://www.adafruit.com/product/2886)
-* [PowerSwitch Tail II](http://www.powerswitchtail.com/)
+* [120V relay](https://www.amazon.com/dp/B00WV7GMA2), or similar
 * [5V 1A (1000mA) USB port power supply](https://www.adafruit.com/products/501)
 * A micro-usb cable
 
@@ -48,76 +51,63 @@ An optional piece of hardware is a wall switch for turning on/off relays more li
 1. Connect a wire from the positive terminal of the relay to a pin between 2 and 9 (inclusive) on the Feather. Keep note of the pin you choose. Multiple relays can be connected to the same Feather by connecting them to different pins.
 1. Connect a wire from the negative terminal of the relay to a ground pin on the Feather.
 
-### Setting up the software dependencies
+### Configuration
 
-These instructions are for Linux (x86_64).
+Copy `cp arduino/config.yml.default arduino/config.yml` for a sample relay configuration.
 
-* Download and extract the [Adafruit SAMD library](https://github.com/adafruit/arduino-board-index/raw/gh-pages/boards/adafruit-samd-1.0.9.tar.bz2) to `~/.arduino15/packages/adafruit/hardware/samd/1.0.9`
-* Download and extract the [ARM compiler](http://downloads.arduino.cc/gcc-arm-none-eabi-4.8.3-2014q1-linux64.tar.gz) to `~/.arduino15/packages/adafruit/tools/arm-none-eabi-gcc/4.8.3-2014q1`
-* Download and extract [Bossac](http://downloads.arduino.cc/bossac-1.6.1-arduino-x86_64-linux-gnu.tar.gz) to `~/.arduino15/packages/adafruit/tools/bossac/1.6.1-arduino`.
-* Download and extract [CMSIS](http://downloads.arduino.cc/CMSIS-4.0.0.tar.bz2) to `~/.arduino15/packages/adafruit/tools/CMSIS/4.0.0-atmel`.
+The config file supports multiple relay configurations. The types are:
 
-Note: The archives above can be extracted whenever you'd like, but the paths at the top of the Makefile must be adjusted accordingly.
+* `wifi_server`: A relay board
+* `wifi_client`: A wall-switch board
+* `wired_server`: An older relay using an Arduino Uno with an Ethernet Shield. This is still supported for that type of board.
+
+Each relay must have its networking configuration filled out and pin configuration for connected devices. The names are for the web UI and the Makefile `RELAY` argument to determine with configuration to use.
 
 ### Compiling & Uploading
 
-1. Create `arm/src/secrets.h` with the following content:
-    ```
-    #define _SSID "your_ssid"
-    #define _PASSPHRASE "passphrase"
-    ```
-1. Change the network settings (IP, DNS, netmask, and gateway) for the Feather by editing the server header (`arm/server.h`) in the `arm` directory of this repo.
-1. Then:
-    ```
-    $ cd arm
-    $ make WIFI_SERVER
-    $ make upload
-    ```
+These instructions are for Linux.
+
+```
+cd arduino
+scripts/download_dependencies.sh
+make wifi_server RELAY=wired_server_1 # Assumes the board is on /dev/ttyACM0, see the variable at the top of the Makefile if a different device is necessary.
+```
 
 ### Android app
 
-1. Install the APK provided on the Releases page
-
-Alternatively, the Android app can be compiled by:
+The Android app can be compiled by:
 
 1. Install the Android SDK (http://developer.android.com/sdk/index.html).
 1. Create `local.properties` in the `android/` directory with the following contents: `sdk.dir=/path/to/android/sdk`.
 1. From the `android` directory, run:
-    ```
-    $ ./gradlew assembleDebug
-    $ ./gradlew installDebug
-    ```
+
+```
+./gradlew assembleDebug
+./gradlew installDebug
+```
+
+### Web UI
+
+Each relay serves a web UI for itself. Open `http://[relay-ip]` to access it. *Note that it is HTTP, not HTTPS.*
 
 ### Desktop client
 
-1. If desired, build the desktop client in the `desktop` directory of this repo on a Linux system by running `make` from that directory.
-1. The desktop client is fairly straightforward. Run it with `--help` for more info.
+For control of relays from desktop systems, a command line Rust program is provided.
+
+To build, run `cargo build` from the `desktop/` directory. The resulting binary will be in `desktop/target/debug`. Use `--help` for usage instructions.
 
 ### Wall Switch
 
 1. Wire the circuit as follows:
-    ![](/arm/docs/wiring.png?raw=true)
-    On the switch VDD is pin 1 (left most) and LED- is pin 4 (right most).
-1. Then follow the instructions in the "Setting up the software dependencies" and "Compiling & Uploading" sections above.
-1. Use `make WIFI_CLIENT` to build.
+  ![](/arm/docs/wiring.png?raw=true)
+  On the switch VDD is pin 1 (left most) and LED- is pin 4 (right most).
+1. The follow the same build instructions as above with 
+1. Use `make wifi_client RELAY=wifi_client_1` to build.
 
 ### Networking
 
-The default port is 2424. Don't forget to add rules to allow communication on this port on any firewalls or gateways between the client and the server.
+All communication happens over port 80. Don't forget to add rules to allow communication on this port on any firewalls or gateways between the client and the server.
 
 ## License
 
-Copyright (C) 2012 Shane Tully
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+GPLv3
