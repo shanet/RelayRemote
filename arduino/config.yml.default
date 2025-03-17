@@ -1,0 +1,39 @@
+wired_server_1:
+  type: wired_server
+  ui:
+    name: Wired Server 1
+    pins:
+      8: Device 1
+      9: Device 2
+  network:
+    ip: 192.168.1.31
+    mac: "DE:AD:BE:EF:FF:FF" # This must be unique for each wired server
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+
+wifi_server_1:
+  type: wifi_server
+  ui:
+    name: WiFi Server 1
+    pins:
+      9: Device 1
+  network:
+    ip: 192.168.1.32
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    ssid:
+    passphrase:
+
+wifi_client_2:
+  type: wifi_client
+  clients:
+    - ip: 192.168.1.31
+      pin: 9
+    - ip: 192.168.1.32
+      pin: 9
+  network:
+    ip: 192.168.1.30
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    ssid:
+    passphrase:
