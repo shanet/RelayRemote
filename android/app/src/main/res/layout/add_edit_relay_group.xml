@@ -3,19 +3,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:orientation="vertical">
+  android:orientation="vertical"
+  android:layout_marginStart="10dp"
+  android:layout_marginEnd="10dp">
 
   <TextView android:id="@+id/addEditGroupNameLabel"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="@string/nameLabel" />
+    android:text="@string/nameLabel"
+    android:layout_marginTop="10dp" />
 
   <EditText android:id="@+id/addEditGroupName"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_below="@id/addEditGroupNameLabel"
     android:inputType="text"
-    android:ems="10" />
+    android:ems="10"
+    android:layout_marginBottom="10dp" />
 
   <TextView android:id="@+id/addEditRelayListLabel"
     android:layout_width="wrap_content"
@@ -26,7 +30,8 @@
   <ListView android:id="@+id/addEditRelayList"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@id/addEditRelayListLabel" />
+    android:layout_below="@id/addEditRelayListLabel"
+    android:layout_marginBottom="10dp" />
 
   <Button android:id="@+id/addEditRelayGroup"
     android:layout_width="fill_parent"

@@ -9,7 +9,8 @@
     android:allowBackup="true"
     android:icon="@drawable/launcher_icon"
     android:label="@string/appName"
-    android:theme="@style/AppTheme">
+    android:theme="@style/AppTheme"
+    android:usesCleartextTraffic="true">
     <activity
       android:name=".Main"
       android:label="@string/appName"

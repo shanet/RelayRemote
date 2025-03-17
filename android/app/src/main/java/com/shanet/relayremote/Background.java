@@ -1,11 +1,14 @@
 package com.shanet.relayremote;
 
 import java.io.IOException;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -76,7 +79,7 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<Pair>> {
       for(int i=1; i<states.size(); i++) {
         if(pin == Integer.valueOf((String)states.get(i).first)) {
           // Set the state of the widget in the widget class
-          Widget.setState(appWidgetId, (((String)states.get(i).second).charAt(0) == Constants.CMD_ON) ? Widget.STATE_ON : Widget.STATE_OFF);
+          Widget.setState(appWidgetId, ((String)states.get(i).second).charAt(0) == Constants.CMD_ON ? Widget.STATE_ON : Widget.STATE_OFF);
 
           RemoteViews views = Widget.getWidgetViews(context, appWidgetId);
           AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views);
@@ -107,120 +110,39 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<Pair>> {
     int port    = info.getInt("port", Constants.DEFAULT_PORT);
     appWidgetId = info.getInt("appWidgetId", -1);
 
-    // Create the server
-    Server server;
-    String reply;
+    Server server = new Server(host, port);
     ArrayList<Pair> states = new ArrayList<Pair>();
 
-    try {
-      server = new Server(host, port);
-    } catch (SocketException e) {
+    // The first entry in the states list should be the server the states belong to
+    states.add(new Pair("server", host));
+
+    try{
+      if(op == Constants.OP_SET) {
+        server.post("/api/pins/" + pin, "state=" + command(cmd));
+        states.add(new Pair(String.valueOf(pin), String.valueOf(cmd)));
+      } else if(op == Constants.OP_GET) {
+        String response = server.get("/api/pins");
+        JSONObject jsonResponse = new JSONObject(response);
+        Iterator<String> keys = jsonResponse.keys();
+
+        while(keys.hasNext()) {
+          String pin = keys.next();
+          Integer state = (Integer)jsonResponse.get(pin);
+
+          states.add(new Pair(pin, String.valueOf(state == 1 ? Constants.CMD_ON : Constants.CMD_OFF)));
+        }
+      }
+    } catch(IOException | JSONException exception) {
       if(!isWidget) {
         ((Activity)context).runOnUiThread(new Runnable() {
           public void run() {
             dialog.dismiss();
-            DialogUtils.displayErrorDialog(context, R.string.serverCommErrorTitle, R.string.serverCommError);
+            DialogUtils.displayErrorDialog(context, context.getString(R.string.serverCommErrorTitle), exception.getMessage());
           }
         });
       }
+
       return createErrorStatesArray(host, pin, cmd);
-    }
-
-    try {
-      // Connect to the server if not already connected
-      if(!server.isConnected()) {
-        server.connect();
-
-        // Ensure we're connected now
-        if(!server.isConnected()) {
-          if(!isWidget) {
-            ((Activity)context).runOnUiThread(new Runnable() {
-              public void run() {
-                DialogUtils.displayErrorDialog(context, R.string.serverConnectErrorTitle, R.string.serverConnectError);
-              }
-            });
-          }
-          throw new Exception();
-        }
-      }
-
-      // Format and send the data to the server
-      if(op == Constants.OP_GET) {
-        // GET operations are just the letter "g"
-        server.send(Constants.OP_GET + "\n");
-      } else {
-        // SET operations are of the form "s-[pin]-[state]"
-        // Pin is the pin the relay is connected to
-        // State is 0 for off, 1 for on, or t for toggle (not used in this app)
-        server.send(Constants.OP_SET + "-" + pin + "-" + cmd + "\n");
-      }
-
-      // Get the reply from the server
-      reply = server.receive();
-
-      if(reply.equals("ERR")) {
-        if(!isWidget) {
-          ((Activity)context).runOnUiThread(new Runnable() {
-            public void run() {
-              DialogUtils.displayErrorDialog(context, R.string.serverErrorTitle, R.string.serverError);
-            }
-          });
-        }
-        throw new Exception();
-       // Create the states array
-      } else {
-        // The first entry in the states list should be the server the states belong to
-        states.add(new Pair("server", host));
-
-        // If a get operation, format the reply
-        if(op == Constants.OP_GET) {
-          for(int i=0; i< reply.length(); i+=4) {
-            states.add(new Pair(String.valueOf(reply.charAt(i)), String.valueOf((reply.charAt(i+2) == '1') ? Constants.CMD_ON : Constants.CMD_OFF)));
-          }
-        // Else, it's a set command so just add the pin we just handled
-        } else {
-          states.add(new Pair(String.valueOf(pin), String.valueOf(cmd)));
-        }
-      }
-
-
-    } catch (UnknownHostException uhe) {
-      states = createErrorStatesArray(host, pin, cmd);
-      if(!isWidget) {
-        ((Activity)context).runOnUiThread(new Runnable() {
-          public void run() {
-            dialog.dismiss();
-            DialogUtils.displayErrorDialog(context, R.string.unknownHostErrorTitle, R.string.unknownHostError);
-          }
-        });
-      }
-    } catch (final IOException ioe) {
-      states = createErrorStatesArray(host, pin, cmd);
-      if(!isWidget) {
-        ((Activity)context).runOnUiThread(new Runnable() {
-          public void run() {
-            dialog.dismiss();
-            DialogUtils.displayErrorDialog(context, context.getString(R.string.serverCommErrorTitle), ioe.getMessage());
-          }
-        });
-      }
-    } catch (NullPointerException npe) {
-      states = createErrorStatesArray(host, pin, cmd);
-      if(!isWidget) {
-        ((Activity)context).runOnUiThread(new Runnable() {
-          public void run() {
-            dialog.dismiss();
-            DialogUtils.displayErrorDialog(context, R.string.serverCommErrorTitle, R.string.serverCommError);
-          }
-        });
-      }
-    } catch (Exception e) {
-      states = createErrorStatesArray(host, pin, cmd);
-    } finally {
-      // Shut down the server
-      try {
-        if(server != null && !server.isConnected()) server.close();
-      } catch (IOException ioe) {}
     }
 
     return states;
@@ -230,7 +152,20 @@ public class Background extends AsyncTask<Bundle, Integer, ArrayList<Pair>> {
     // If there was an error, the state should fall back to whatever the original state was
     ArrayList<Pair> states = new ArrayList<Pair>();
     states.add(new Pair("server", host));
-    states.add(new Pair(String.valueOf(pin), String.valueOf((cmd == Constants.CMD_OFF ? Constants.CMD_ON : Constants.CMD_OFF))));
+    states.add(new Pair(String.valueOf(pin), String.valueOf(cmd == Constants.CMD_OFF ? Constants.CMD_ON : Constants.CMD_OFF)));
     return states;
+  }
+
+  private String command(char cmd) {
+    switch(cmd) {
+      case Constants.CMD_OFF:
+        return "off";
+      case Constants.CMD_ON:
+        return "on";
+      case Constants.CMD_TOGGLE:
+        return "toggle";
+    }
+
+    return null;
   }
 }

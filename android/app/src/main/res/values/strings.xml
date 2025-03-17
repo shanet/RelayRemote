@@ -162,7 +162,9 @@
 
   <string name="changelogTitle">Changelog</string>
   <string name="changelogText">
-    <b>Current Version: 1.3</b>
+    <b>Current Version: 2.0</b>
+    \n\n<b>2.0:</b>
+      \n\t- Replaced custom network protocol with HTTP
     \n\n<b>1.3:</b>
       \n\t- Added delay between relays when turning on/off multiple relays in a group
     \n\n<b>1.2:</b>

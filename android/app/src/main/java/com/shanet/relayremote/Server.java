@@ -1,104 +1,85 @@
 package com.shanet.relayremote;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.URL;
 
 public class Server {
   public String host;
   public int port;
 
-  private Socket connSock     = null;
-  private SocketAddress addr  = null;
-  private BufferedReader recv = null;
-  private PrintWriter send    = null;
-
-  public Server() throws SocketException {
+  public Server() {
     this("", Constants.DEFAULT_PORT);
   }
 
-  public Server(String host) throws SocketException {
+  public Server(String host) {
     this(host, Constants.DEFAULT_PORT);
   }
 
-  public Server(String host, int port) throws SocketException {
+  public Server(String host, int port) {
     this.host = host;
     this.port = port;
-
-    // Init the socket this way so that the timeout is set before connecting
-    addr = new InetSocketAddress(host, port);
-    connSock = new Socket();
-    connSock.setSoTimeout(Constants.NETWORK_TIMEOUT);
-    connSock.setTcpNoDelay(true);
   }
 
-  public int connect() throws UnknownHostException, IOException {
-    connSock.connect(addr, Constants.NETWORK_TIMEOUT);
+  public String get(String path) throws IOException, MalformedURLException {
+    URL url = buildUrl(path);
+    HttpURLConnection request = (HttpURLConnection)url.openConnection();
+    String response = readResponse(request);
+    request.disconnect();
 
-    if(connSock.isConnected()) {
-      // Open send stream
-      send = new PrintWriter(connSock.getOutputStream(), true);
+    if(request.getResponseCode() != 200) {
+      throw new IOException("Request failed (" + request.getResponseCode() + "): " + response);
+    }
 
-      // Open read stream
-      recv = new BufferedReader(new InputStreamReader(connSock.getInputStream()));
+    return response;
+  }
 
-      if(send != null && recv != null) {
-        return Constants.SUCCESS;
+  public void post(String path, String body) throws IOException, MalformedURLException {
+    URL url = buildUrl(path);
+    HttpURLConnection request = (HttpURLConnection)url.openConnection();
+    request.setRequestMethod("POST");
+
+    OutputStream output = request.getOutputStream();
+    output.write(body.getBytes());
+
+    String response = readResponse(request);
+    request.disconnect();
+
+    // Relays return redirects on successful POST requests
+    if(request.getResponseCode() != 200) {
+      throw new IOException("Request failed (" + request.getResponseCode() + "): " + response);
+    }
+  }
+
+  private URL buildUrl(String path) throws MalformedURLException {
+    return new URL("http://" + host + (port == Constants.DEFAULT_PORT ? "" : ":" + port) + path);
+  }
+
+  private String readResponse(HttpURLConnection request) throws IOException {
+    InputStream input = new BufferedInputStream(request.getInputStream());
+    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+    StringBuilder response = new StringBuilder();
+    String line = reader.readLine();
+
+    while(line != null) {
+      response.append(line);
+
+      try {
+        line = reader.readLine();
+      } catch(SocketException exception) {
+        // Ignore errors while reading data; we'll take what we can get
       }
     }
 
-    return Constants.FAILURE;
-  }
-
-  public int send(String data) {
-    // Only try to send if send isn't null
-    if(send != null) {
-      send.println(data);
-      return Constants.SUCCESS;
-    }
-
-    return Constants.FAILURE;
-  }
-
-  public String receive() throws IOException {
-    // Only try to receive if recv isn't null
-    if(recv != null) {
-      return recv.readLine();
-    }
-
-    return null;
-  }
-
-  public void close() throws IOException {
-    if(send != null) {
-      send.close();
-    }
-
-    if(recv != null) {
-      recv.close();
-    }
-
-    if(connSock != null) {
-      connSock.close();
-    }
-  }
-
-  public boolean isConnected() {
-    return connSock.isConnected();
-  }
-
-  public String getServerIPAddress() {
-    if(isConnected()) {
-      return connSock.getInetAddress().toString();
-    }
-
-    return "";
+    return response.toString();
   }
 
   public String getHost() {

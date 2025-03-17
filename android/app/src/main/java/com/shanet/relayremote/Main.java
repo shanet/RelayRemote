@@ -162,6 +162,8 @@ public class Main extends FragmentActivity {
       relay = relays.get(i);
 
       // If the current relay belongs to the server the states belong to, find it's state by matching pins
+      //
+      // March 2025: Holy shit, did I write this before I learned what the hell a map was or something??
       if(relay.getServer().equals(server)) {
         for(int j=1; j<states.size(); j++) {
           if(relay.getPin() == Integer.valueOf((String)states.get(j).first)) {
@@ -174,13 +176,13 @@ public class Main extends FragmentActivity {
             // Check if any widgets are assigned to this relay, and if so, update them
             for(Bundle widget : widgets) {
               if(widget.getInt("type") == Constants.WIDGET_RELAY && widget.getInt("id") == relay.getRid()) {
-                              // Update the indicator image
+                // Update the indicator image
                 RemoteViews views = new RemoteViews(this.getPackageName(), R.layout.widget);
-                views.setImageViewResource(R.id.widgetIndicator, (((String)states.get(i).second).charAt(0) == Constants.CMD_ON) ? R.drawable.widget_on : R.drawable.widget_off);
+                views.setImageViewResource(R.id.widgetIndicator, (((String)states.get(j).second).charAt(0) == Constants.CMD_ON) ? R.drawable.widget_on : R.drawable.widget_off);
                 AppWidgetManager.getInstance(this).updateAppWidget(widget.getInt("wid"), views);
 
                 // Set the state of the widget in the widget class
-                Widget.setState(widget.getInt("wid"), (((String)states.get(i).second).charAt(0) == Constants.CMD_ON) ? Widget.STATE_ON : Widget.STATE_OFF);
+                Widget.setState(widget.getInt("wid"), (((String)states.get(j).second).charAt(0) == Constants.CMD_ON) ? Widget.STATE_ON : Widget.STATE_OFF);
               }
             }
 

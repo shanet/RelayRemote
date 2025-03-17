@@ -11,7 +11,7 @@ public abstract class Constants {
 
   public static final int NETWORK_TIMEOUT = 3000;
 
-  public static final int DEFAULT_PORT = 2424;
+  public static final int DEFAULT_PORT = 80;
   public static final int DEFAULT_PIN  = 9;
 
   public static final char OP_SET     = 's';

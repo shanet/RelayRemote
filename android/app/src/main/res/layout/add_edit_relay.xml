@@ -3,18 +3,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:orientation="vertical">
+  android:orientation="vertical"
+  android:layout_marginStart="10dp"
+  android:layout_marginEnd="10dp">
 
   <TextView android:id="@+id/addNameLabel"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="@string/nameLabel" />
+    android:text="@string/nameLabel"
+    android:layout_marginTop="10dp" />
 
   <EditText android:id="@+id/addEditName"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:inputType="text"
-    android:ems="10" />
+    android:ems="10"
+    android:layout_marginBottom="10dp" />
 
   <TextView android:id="@+id/addEditServerLabel"
     android:layout_width="wrap_content"
@@ -25,7 +29,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:inputType="text"
-    android:ems="10" />
+    android:ems="10"
+    android:layout_marginBottom="10dp" />
 
   <TextView android:id="@+id/addEditPortLabel"
     android:layout_width="wrap_content"
@@ -36,17 +41,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:inputType="numberSigned"
-    android:ems="10" />
+    android:ems="10"
+    android:layout_marginBottom="10dp" />
 
   <TextView android:id="@+id/pinSpinnerLabel"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="@string/pinLabel" />
+    android:text="@string/pinLabel"
+    android:layout_marginBottom="10dp" />
 
   <Spinner android:id="@+id/pinSpinner"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:entries="@array/pinSpinnerEntries" />
+    android:entries="@array/pinSpinnerEntries"
+    android:layout_marginBottom="10dp" />
 
   <Button android:id="@+id/addEditRelay"
     android:layout_width="fill_parent"
