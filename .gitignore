@@ -2,7 +2,8 @@ android/.gradle
 android/local.properties
 android/app/build
 
-arm/bin/deploy
-arm/src/secrets.h
+arduino/bin/**
+arduino/deps/**
+arduino/config.yml
 
-desktop/relayremote
+desktop/target/**
