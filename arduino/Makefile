@@ -135,7 +135,7 @@ CORE_LIB_OBJECTS := $(foreach dir, $(ARDUINO_CORE_DIR) $(LIBRARY_DIRS), \
 
 # Recipes
 # -------------------------------------------------------------------------------------------------------------
-.PHONY:	all wired_server_build wifi_server_build wifi_client_build build_arm build_avr wired_server wifi_server wifi_client upload_avm upload_arm console clean
+.PHONY:	all wired_server_build wifi_server_build wifi_client_build build_arm build_avr wired_server wifi_server wifi_client upload_avr upload_arm console clean
 
 all: wired_server_build wifi_server_build wifi_client_build
 
